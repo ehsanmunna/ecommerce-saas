@@ -10,7 +10,7 @@
 - [x] 2.2 Gate `SwaggerModule.setup('api/docs', ...)` behind
       `NODE_ENV !== 'production'` or an explicit `ENABLE_API_DOCS=true`
       override (per design.md)
-- [ ] 2.3 Confirm the OpenAPI JSON is reachable at `/api/docs-json`
+- [x] 2.3 Confirm the OpenAPI JSON is reachable at `/api/docs-json`
 
 ## 3. Annotate DTOs
 

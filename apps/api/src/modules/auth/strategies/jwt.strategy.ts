@@ -27,6 +27,9 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     if (payload.tenantId !== req.tenant.id) {
       throw new UnauthorizedException('Token tenant does not match the resolved tenant');
     }
+    if (payload.type !== 'staff') {
+      throw new UnauthorizedException('Token is not a staff access token');
+    }
     return payload;
   }
 }

@@ -1393,3 +1393,126 @@ The next technical design should convert this architecture into implementation-l
 14. Custom-domain verification
 15. Production deployment architecture
 16. Backup and disaster recovery strategy
+
+---
+
+# 33. Customer Storefront Page Inventory
+
+The customer-facing storefront (the shared React/Next.js frontend described
+in section 14) is organized around the following pages. This is a
+content/sitemap reference for Phase 2 (Ecommerce) and later phases — it
+does not itself change the architecture.
+
+### Home
+
+```text
+Hero/banner
+Featured products
+Categories
+Best sellers
+Promotions
+```
+
+### Shop / Products
+
+```text
+Product grid
+Search
+Filter
+Sort
+Pagination/infinite scroll
+```
+
+### Category
+
+```text
+Example: Electronics, Clothing, Cosmetics
+Category-specific filters
+```
+
+### Product Details
+
+```text
+Images
+Price
+Variants (size/color)
+Quantity
+Add to Cart
+Buy Now
+Reviews
+```
+
+### Shopping Cart
+
+```text
+Cart items
+Quantity update
+Remove item
+Coupon
+Subtotal
+Shipping
+Total
+Checkout button
+```
+
+### Checkout
+
+```text
+Customer information
+Shipping address
+Delivery method
+Payment method
+Order summary
+Place Order
+```
+
+### Order Confirmation
+
+```text
+Order number
+Order summary
+Payment status
+Delivery information
+```
+
+### My Account
+
+```text
+Profile
+Addresses
+Orders
+Wishlist
+Password/security
+```
+
+### Order Details / Tracking
+
+```text
+Order status
+Products
+Shipping information
+Tracking
+```
+
+### Wishlist
+
+```text
+Saved products
+Add to cart
+Remove
+```
+
+### Important Supporting Pages
+
+```text
+Login
+Register
+Forgot Password
+About Us
+Contact Us
+FAQ
+Privacy Policy
+Terms & Conditions
+Shipping & Delivery Policy
+Return & Refund Policy
+```
