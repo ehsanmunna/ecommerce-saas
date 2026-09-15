@@ -62,12 +62,23 @@ volume).
 ```bash
 cp apps/api/.env.example apps/api/.env
 cp apps/admin/.env.example apps/admin/.env.local
+cp apps/storefront/.env.example apps/storefront/.env.local
 ```
 
 The defaults in `apps/api/.env.example` already match the docker-compose
 Postgres above. See that file for what each variable does (JWT secrets,
 tenant DB admin credentials, the root domain used for subdomain-based
 tenant resolution, etc.) — nothing needs to change for local dev.
+
+`apps/storefront/.env.local` needs one edit: `NEXT_PUBLIC_DEV_TENANT_SLUG`
+must be set to a tenant slug you've actually registered (see step 5) —
+the placeholder value only works if that's the slug you used with
+`POST /tenants/register`. Restart `npm run dev:storefront` after creating
+or editing this file, since Next.js only reads env files at startup.
+Skipping this step is the most common cause of the storefront failing
+every request with `Unable to resolve tenant from request host` — that
+error means no tenant slug reached the API at all, not that the slug was
+wrong.
 
 ## 4. Apply the platform database migration
 

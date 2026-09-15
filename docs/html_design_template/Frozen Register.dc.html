@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: rgb(255,255,255); -webkit-font-smoothing: antialiased; }
+  a { color: rgb(37,43,66); text-decoration: none; }
+  a:hover { color: rgb(229,160,0); }
+  ::placeholder { color: rgb(164,164,164); }
+</style>
+</helmet>
+<div style="width:100%; min-height:100vh; background:rgb(255,255,255); font-family:Inter, Helvetica, Arial, sans-serif; color:rgb(47,47,47); overflow-x:hidden; display:flex; flex-direction:column">
+
+  <div style="display:flex; justify-content:center; padding:48px 24px 0">
+    <a href="./Frozen Home.dc.html">
+      <img src="./assets/logo.png" alt="Frozen" style="width:220px; height:48px; object-fit:contain" />
+    </a>
+  </div>
+
+  <div style="flex:1; display:flex; align-items:center; justify-content:center; padding:40px 24px">
+    <div style="width:100%; max-width:440px; display:flex; flex-direction:column; gap:24px; padding:44px; border-radius:24px; background:rgb(255,255,255); box-shadow:0px 8px 30px 0px rgba(0,0,0,0.08); box-sizing:border-box">
+      <div style="display:flex; flex-direction:column; gap:8px; text-align:center">
+        <span style="font-size:28px; font-weight:700; color:rgb(47,47,47)">Create Account</span>
+        <span style="font-size:14px; font-weight:400; color:rgb(115,115,115)">Join Frozen for exclusive kids' fashion deals</span>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:14px">
+        <div style="display:flex; gap:12px">
+          <input value="{{ form.firstName }}" onChange="{{ setField_firstName }}" placeholder="First name" style="{{ inputStyle }}" />
+          <input value="{{ form.lastName }}" onChange="{{ setField_lastName }}" placeholder="Last name" style="{{ inputStyle }}" />
+        </div>
+        <input value="{{ form.email }}" onChange="{{ setField_email }}" placeholder="Email address" style="{{ inputStyleFull }}" />
+        <input value="{{ form.password }}" onChange="{{ setField_password }}" type="password" placeholder="Password" style="{{ inputStyleFull }}" />
+        <input value="{{ form.confirmPassword }}" onChange="{{ setField_confirmPassword }}" type="password" placeholder="Confirm password" style="{{ inputStyleFull }}" />
+      </div>
+
+      <div style="display:flex; align-items:flex-start; gap:10px; cursor:pointer" onClick="{{ toggleTerms }}">
+        <div style="{{ termsBoxStyle }}"></div>
+        <span style="font-size:13px; font-weight:400; color:rgb(55,55,55)">I agree to the <a href="./Frozen Terms &amp; Conditions.dc.html" style="color:rgb(229,160,0); font-weight:700">Terms &amp; Conditions</a> and <a href="./Frozen Privacy Policy.dc.html" style="color:rgb(229,160,0); font-weight:700">Privacy Policy</a></span>
+      </div>
+
+      <sc-if value="{{ error }}" hint-placeholder-val="{{ false }}">
+      <span style="font-size:13px; font-weight:600; color:rgb(214,69,69)">{{ error }}</span>
+      </sc-if>
+
+      <div style="height:51px; border-radius:20px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center; cursor:pointer" onClick="{{ createAccount }}" style-hover="background:rgb(255,172,51)">
+        <span style="font-size:16px; font-weight:700; color:rgb(54,54,54)">Create Account</span>
+      </div>
+
+      <div style="text-align:center; font-size:14px; font-weight:500; color:rgb(115,115,115)">
+        Already have an account? <a href="./Frozen Login.dc.html" style="color:rgb(229,160,0); font-weight:700">Sign in</a>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:32px 24px; font-size:13px; font-weight:400; color:rgb(164,164,164)">© 2026 Frozen. All rights reserved.</div>
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const INPUT_STYLE = "height:51px; padding:0 18px; border-radius:16px; border:2px solid rgb(230,230,230); background:rgb(255,255,255); font-family:Inter, sans-serif; font-size:14px; color:rgb(47,47,47); box-sizing:border-box; outline:none; flex:1; min-width:0";
+
+class Component extends DCLogic {
+  state = {
+    form: { firstName: "", lastName: "", email: "", password: "", confirmPassword: "" },
+    agreedTerms: false,
+    error: "",
+  };
+
+  setField(name, value) {
+    this.setState(s => ({ form: { ...s.form, [name]: value }, error: "" }));
+  }
+
+  renderVals() {
+    const fieldSetters = {};
+    ["firstName", "lastName", "email", "password", "confirmPassword"].forEach(name => {
+      fieldSetters[`setField_${name}`] = (e) => this.setField(name, e.target.value);
+    });
+
+    return {
+      form: this.state.form,
+      ...fieldSetters,
+      inputStyle: INPUT_STYLE,
+      inputStyleFull: `${INPUT_STYLE}; width:100%`,
+      termsBoxStyle: `width:18px; height:18px; margin-top:2px; border-radius:5px; flex-shrink:0; border:2px solid ${this.state.agreedTerms ? "rgb(255,207,64)" : "rgb(200,200,200)"}; background:${this.state.agreedTerms ? "rgb(255,207,64)" : "transparent"}`,
+      toggleTerms: () => this.setState(s => ({ agreedTerms: !s.agreedTerms })),
+      error: this.state.error,
+      createAccount: () => {
+        const f = this.state.form;
+        if (!f.firstName || !f.email || !f.password) {
+          this.setState({ error: "Please fill in all required fields" });
+        } else if (f.password !== f.confirmPassword) {
+          this.setState({ error: "Passwords do not match" });
+        } else if (!this.state.agreedTerms) {
+          this.setState({ error: "Please agree to the Terms & Conditions" });
+        } else {
+          this.setState({ error: "" });
+        }
+      },
+    };
+  }
+}
+
+</script>
+</body>
+</html>

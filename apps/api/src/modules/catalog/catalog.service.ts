@@ -101,4 +101,15 @@ export class CatalogService {
   listCategories(tenantDb: TenantPrismaClient) {
     return tenantDb.category.findMany({ orderBy: { name: 'asc' } });
   }
+
+  async getProductDetail(tenantDb: TenantPrismaClient, id: string) {
+    const product = await tenantDb.product.findUnique({
+      where: { id },
+      include: { category: true, variants: true },
+    });
+    if (!product || !product.isActive) {
+      throw new NotFoundException('Product not found');
+    }
+    return product;
+  }
 }

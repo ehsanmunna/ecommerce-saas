@@ -1,0 +1,355 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: rgb(255,255,255); -webkit-font-smoothing: antialiased; }
+  a { color: rgb(37,43,66); text-decoration: none; }
+  a:hover { color: rgb(229,160,0); }
+  ::placeholder { color: rgb(164,164,164); }
+</style>
+</helmet>
+<div style="width:100%; background:rgb(255,255,255); font-family:Inter, Helvetica, Arial, sans-serif; color:rgb(47,47,47); overflow-x:hidden">
+
+  <div style="height:50px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center">
+    <div style="width:100%; max-width:1592px; padding:0 24px; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap">
+      <div style="display:flex; align-items:center; gap:8px">
+        <img src="./assets/icon-truck.svg" alt="" style="width:15px; height:11px" />
+        <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Free Shipping on Orders Over $99</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:26px">
+        <div style="display:flex; align-items:center; gap:8px">
+          <img src="./assets/icon-return.svg" alt="" style="width:16px; height:16px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">30 Days easy return</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px">
+          <img src="./assets/icon-help.svg" alt="" style="width:16px; height:17px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Help Center</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:59px 0 39px">
+    <div style="width:100%; max-width:1592px; padding:0 24px; box-sizing:border-box; display:flex; align-items:center; gap:48px; flex-wrap:wrap">
+      <img src="./assets/logo.png" alt="Frozen" style="width:292px; height:63px; object-fit:contain; flex-shrink:0" />
+      <div style="flex:1; min-width:280px; display:flex; align-items:center; height:49px; background:rgb(240,240,240)">
+        <div style="width:49px; height:49px; display:flex; align-items:center; justify-content:center; flex-shrink:0">
+          <div style="width:18px; height:2px; background:rgb(26,26,26); box-shadow:0 6px 0 rgb(26,26,26), 0 -6px 0 rgb(26,26,26)"></div>
+        </div>
+        <span style="flex:1; font-size:12px; font-weight:700; line-height:100%; color:rgb(164,164,164)">Search you product</span>
+        <img src="./assets/icon-search.svg" alt="" style="width:28px; height:28px; margin-right:9px; flex-shrink:0" />
+      </div>
+      <div style="display:flex; align-items:center; gap:51px; flex-shrink:0">
+        <div style="display:flex; align-items:center; gap:7px">
+          <img src="./assets/icon-user.svg" alt="" style="width:27px; height:27px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Sign-in | Sign-up</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px">
+          <img src="./assets/icon-heart.svg" alt="" style="width:27px; height:25px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Wish-list</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:4px">
+          <img src="./assets/icon-cart.svg" alt="" style="width:27px; height:27px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Cart</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:0 24px 12px; box-sizing:border-box">
+    <div style="width:100%; max-width:1592px; display:flex; align-items:center; gap:8px; font-size:14px; font-weight:500; color:rgb(115,115,115)">
+      <a href="./Frozen Home.dc.html" style="color:rgb(115,115,115)">Home</a>
+      <span>/</span>
+      <span style="color:rgb(37,43,66); font-weight:700">All Products</span>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-direction:column; align-items:center; padding:8px 24px 24px; box-sizing:border-box">
+    <div style="font-size:44px; font-weight:700; line-height:100%; color:rgb(47,47,47)">All Products</div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:0 24px 100px; box-sizing:border-box">
+    <div style="width:100%; max-width:1592px; display:grid; grid-template-columns:260px minmax(0,1fr); gap:48px">
+
+      <div style="display:flex; flex-direction:column; gap:36px; min-width:0">
+
+        <div style="display:flex; flex-direction:column; gap:16px">
+          <span style="font-size:16px; font-weight:700; color:rgb(47,47,47)">Search</span>
+          <div style="display:flex; align-items:center; height:44px; background:rgb(240,240,240); border-radius:10px; padding:0 14px; box-sizing:border-box">
+            <input value="{{ search }}" onChange="{{ onSearchChange }}" placeholder="Search products" style="flex:1; border:none; background:transparent; outline:none; font-family:Inter, sans-serif; font-size:14px; color:rgb(47,47,47)" />
+            <img src="./assets/icon-search.svg" alt="" style="width:18px; height:18px; flex-shrink:0" />
+          </div>
+        </div>
+
+        <div style="height:1px; background:rgb(230,230,230)"></div>
+
+        <div style="display:flex; flex-direction:column; gap:16px">
+          <span style="font-size:16px; font-weight:700; color:rgb(47,47,47)">Category</span>
+          <sc-for list="{{ categories }}" as="cat" hint-placeholder-count="5">
+            <div style="display:flex; align-items:center; gap:10px; cursor:pointer" onClick="{{ cat.onClick }}">
+              <div style="{{ cat.boxStyle }}"></div>
+              <span style="font-size:14px; font-weight:500; color:rgb(55,55,55); flex:1">{{ cat.label }}</span>
+              <span style="font-size:13px; font-weight:400; color:rgb(164,164,164)">{{ cat.count }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="height:1px; background:rgb(230,230,230)"></div>
+
+        <div style="display:flex; flex-direction:column; gap:16px">
+          <span style="font-size:16px; font-weight:700; color:rgb(47,47,47)">Price</span>
+          <sc-for list="{{ priceRanges }}" as="pr" hint-placeholder-count="4">
+            <div style="display:flex; align-items:center; gap:10px; cursor:pointer" onClick="{{ pr.onClick }}">
+              <div style="{{ pr.boxStyle }}"></div>
+              <span style="font-size:14px; font-weight:500; color:rgb(55,55,55)">{{ pr.label }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <sc-if value="{{ hasActiveFilters }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:14px; font-weight:700; color:rgb(229,160,0); cursor:pointer" onClick="{{ clearFilters }}">Clear all filters</div>
+        </sc-if>
+      </div>
+
+      <div style="display:flex; flex-direction:column; min-width:0">
+
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap; margin-bottom:32px">
+          <span style="font-size:14px; font-weight:500; color:rgb(115,115,115)">{{ resultsLabel }}</span>
+          <div style="display:flex; align-items:center; gap:10px">
+            <span style="font-size:14px; font-weight:700; color:rgb(47,47,47)">Sort by</span>
+            <select value="{{ sort }}" onChange="{{ onSortChange }}" style="height:44px; padding:0 14px; border-radius:10px; border:2px solid rgb(230,230,230); background:rgb(255,255,255); font-family:Inter, sans-serif; font-size:14px; font-weight:600; color:rgb(47,47,47); cursor:pointer">
+              <option value="featured">Featured</option>
+              <option value="price-asc">Price: Low to High</option>
+              <option value="price-desc">Price: High to Low</option>
+              <option value="name-asc">Name: A to Z</option>
+            </select>
+          </div>
+        </div>
+
+        <sc-if value="{{ hasResults }}" hint-placeholder-val="{{ true }}">
+        <div style="width:100%; display:grid; grid-template-columns:repeat(auto-fill, minmax(260px, 1fr)); gap:40px">
+          <sc-for list="{{ visibleProducts }}" as="p" hint-placeholder-count="8">
+            <div style="border-radius:25px; background:rgb(255,255,255); box-shadow:0px 4px 10px 0px rgba(0,0,0,0.1); padding:24px; box-sizing:border-box; display:flex; flex-direction:column; gap:24px; align-items:stretch" style-hover="box-shadow:0px 10px 24px 0px rgba(0,0,0,0.14)">
+              <div style="position:relative; height:220px; border-radius:10px; overflow:hidden; background:rgb(205,254,251)">
+                <div style="position:absolute; inset:0; background:url(./assets/product.jpg) center / cover no-repeat"></div>
+                <div style="position:absolute; right:16px; top:16px; width:32px; height:32px; border-radius:16px; background:rgba(255,255,255,0.9); display:flex; align-items:center; justify-content:center">
+                  <img src="./assets/icon-heart.svg" alt="Add to wish-list" style="width:18px; height:16px" />
+                </div>
+              </div>
+              <div style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-start; gap:16px">
+                <div style="display:flex; flex-direction:column; gap:9px; align-items:flex-start; min-width:0">
+                  <div style="font-size:16px; font-weight:700; line-height:130%; color:rgb(37,43,66)">{{ p.title }}</div>
+                  <div style="font-size:14px; font-weight:400; line-height:100%; color:rgb(115,115,115)">{{ p.brand }}</div>
+                  <div style="font-size:16px; font-weight:700; line-height:100%; color:rgb(37,43,66)">{{ p.price }}</div>
+                </div>
+                <div style="width:40px; height:39px; border-radius:25px; background:rgb(26,26,26); box-shadow:0px 1px 10px 0px rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; flex-shrink:0" style-hover="background:rgb(55,55,55)">
+                  <span style="font-family:Montserrat, Helvetica, Arial, sans-serif; font-weight:500; font-size:28px; line-height:20px; letter-spacing:0.2px; color:rgb(255,255,255); margin-top:-3px">+</span>
+                </div>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+
+<sc-if value="{{ isLoadingMore }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; justify-content:center; padding:56px 0">
+          <div style="width:36px; height:36px; border-radius:50%; border:4px solid rgb(230,230,230); border-top-color:rgb(255,207,64); animation:spin 0.8s linear infinite"></div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ allLoaded }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; justify-content:center; padding:48px 0; font-size:14px; font-weight:500; color:rgb(164,164,164)">You've reached the end of the list</div>
+        </sc-if>
+        </sc-if>
+
+<sc-if value="{{ noResults }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; align-items:center; gap:16px; padding:100px 0">
+          <span style="font-size:20px; font-weight:700; color:rgb(47,47,47)">No products found</span>
+          <span style="font-size:14px; font-weight:400; color:rgb(115,115,115)">Try adjusting your search or filters</span>
+        </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </div>
+
+  <div style="background:rgb(26,26,26); display:flex; justify-content:center; padding:72px 24px">
+    <div style="width:100%; max-width:1592px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap">
+      <span style="font-size:16px; font-weight:700; line-height:100%; color:rgb(255,255,255)">Frozen — Trendy &amp; Stylish Outfits for Kids</span>
+      <span style="font-size:16px; font-weight:400; line-height:100%; color:rgb(178,178,178)">© 2026 Frozen. All rights reserved.</span>
+    </div>
+  </div>
+
+</div>
+<helmet>
+<style>
+  @keyframes spin { to { transform: rotate(360deg); } }
+</style>
+</helmet>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const CATEGORY_LIST = ["Girls", "Boys", "Baby", "Dresses", "Outerwear"];
+const BRANDS = ["NIKE", "PUMA", "ADIDAS", "ZARA KIDS", "H&M", "GAP", "UNIQLO", "CARTER'S"];
+const PRICE_RANGES = [
+  { label: "Under $25", min: 0, max: 25 },
+  { label: "$25 to $50", min: 25, max: 50 },
+  { label: "$50 to $75", min: 50, max: 75 },
+  { label: "$75 and above", min: 75, max: Infinity },
+];
+const PAGE_SIZE = 8;
+
+function buildCatalog() {
+  const titleWords = ["Cotton Hoodie", "Summer Tee", "Overall Set", "Knit Cardigan", "Party Dress", "Jogger Pants", "Long Sleeve Top", "Winter Coat", "Denim Jacket", "Fleece Jumper", "Graphic Tee", "Pleated Skirt"];
+  const items = [];
+  for (let i = 0; i < 48; i++) {
+    const cat = CATEGORY_LIST[i % CATEGORY_LIST.length];
+    const brand = BRANDS[i % BRANDS.length];
+    const word = titleWords[i % titleWords.length];
+    const price = 18 + ((i * 7) % 82);
+    items.push({
+      id: i,
+      title: `${cat} ${word}`,
+      brand,
+      category: cat,
+      price,
+      priceLabel: `$${price.toFixed(2)}`,
+    });
+  }
+  return items;
+}
+
+const CATALOG = buildCatalog();
+
+class Component extends DCLogic {
+  state = {
+    search: "",
+    activeCategories: [],
+    activePriceRanges: [],
+    sort: "featured",
+    visibleCount: PAGE_SIZE,
+    isLoadingMore: false,
+  };
+
+  componentDidMount() {
+    this._onScroll = () => {
+      if (window.scrollY <= 0) return;
+      const scrolledNearBottom = window.scrollY + window.innerHeight >= document.body.scrollHeight - 400;
+      if (scrolledNearBottom) this.loadMore();
+    };
+    window.addEventListener("scroll", this._onScroll);
+  }
+
+  componentWillUnmount() {
+    window.removeEventListener("scroll", this._onScroll);
+  }
+
+  getFiltered() {
+    const q = this.state.search.trim().toLowerCase();
+    let list = CATALOG.filter(p => {
+      if (q && !p.title.toLowerCase().includes(q) && !p.brand.toLowerCase().includes(q)) return false;
+      if (this.state.activeCategories.length && !this.state.activeCategories.includes(p.category)) return false;
+      if (this.state.activePriceRanges.length) {
+        const inRange = this.state.activePriceRanges.some(idx => {
+          const r = PRICE_RANGES[idx];
+          return p.price >= r.min && p.price < r.max;
+        });
+        if (!inRange) return false;
+      }
+      return true;
+    });
+    if (this.state.sort === "price-asc") list = [...list].sort((a, b) => a.price - b.price);
+    else if (this.state.sort === "price-desc") list = [...list].sort((a, b) => b.price - a.price);
+    else if (this.state.sort === "name-asc") list = [...list].sort((a, b) => a.title.localeCompare(b.title));
+    return list;
+  }
+
+  loadMore() {
+    const filtered = this.getFiltered();
+    if (this.state.visibleCount >= filtered.length || this.state.isLoadingMore) return;
+    this.setState({ isLoadingMore: true });
+    setTimeout(() => {
+      this.setState(s => ({ visibleCount: s.visibleCount + PAGE_SIZE, isLoadingMore: false }));
+    }, 500);
+  }
+
+  toggleCategory(cat) {
+    this.setState(s => {
+      const has = s.activeCategories.includes(cat);
+      return {
+        activeCategories: has ? s.activeCategories.filter(c => c !== cat) : [...s.activeCategories, cat],
+        visibleCount: PAGE_SIZE,
+      };
+    });
+  }
+
+  togglePriceRange(idx) {
+    this.setState(s => {
+      const has = s.activePriceRanges.includes(idx);
+      return {
+        activePriceRanges: has ? s.activePriceRanges.filter(i => i !== idx) : [...s.activePriceRanges, idx],
+        visibleCount: PAGE_SIZE,
+      };
+    });
+  }
+
+  renderVals() {
+    const filtered = this.getFiltered();
+    const visibleProducts = filtered.slice(0, this.state.visibleCount).map(p => ({
+      title: p.title,
+      brand: p.brand,
+      price: p.priceLabel,
+    }));
+
+    const categories = CATEGORY_LIST.map(label => {
+      const active = this.state.activeCategories.includes(label);
+      const count = CATALOG.filter(p => p.category === label).length;
+      return {
+        label,
+        count,
+        boxStyle: `width:18px; height:18px; border-radius:5px; border:2px solid ${active ? "rgb(255,207,64)" : "rgb(200,200,200)"}; background:${active ? "rgb(255,207,64)" : "transparent"}`,
+        onClick: () => this.toggleCategory(label),
+      };
+    });
+
+    const priceRanges = PRICE_RANGES.map((r, i) => {
+      const active = this.state.activePriceRanges.includes(i);
+      return {
+        label: r.label,
+        boxStyle: `width:18px; height:18px; border-radius:5px; border:2px solid ${active ? "rgb(255,207,64)" : "rgb(200,200,200)"}; background:${active ? "rgb(255,207,64)" : "transparent"}`,
+        onClick: () => this.togglePriceRange(i),
+      };
+    });
+
+    return {
+      search: this.state.search,
+      onSearchChange: (e) => this.setState({ search: e.target.value, visibleCount: PAGE_SIZE }),
+      categories,
+      priceRanges,
+      hasActiveFilters: this.state.activeCategories.length > 0 || this.state.activePriceRanges.length > 0 || this.state.search.length > 0,
+      clearFilters: () => this.setState({ search: "", activeCategories: [], activePriceRanges: [], visibleCount: PAGE_SIZE }),
+      sort: this.state.sort,
+      onSortChange: (e) => this.setState({ sort: e.target.value }),
+      resultsLabel: `${filtered.length} products found`,
+      hasResults: filtered.length > 0,
+      noResults: filtered.length === 0,
+      visibleProducts,
+      isLoadingMore: this.state.isLoadingMore,
+      allLoaded: filtered.length > 0 && this.state.visibleCount >= filtered.length && !this.state.isLoadingMore,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

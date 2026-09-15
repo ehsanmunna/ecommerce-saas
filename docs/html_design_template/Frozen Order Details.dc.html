@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: rgb(255,255,255); -webkit-font-smoothing: antialiased; }
+  a { color: rgb(37,43,66); text-decoration: none; }
+  a:hover { color: rgb(229,160,0); }
+</style>
+</helmet>
+<div style="width:100%; background:rgb(255,255,255); font-family:Inter, Helvetica, Arial, sans-serif; color:rgb(47,47,47); overflow-x:hidden">
+
+  <div style="height:50px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center">
+    <div style="width:100%; max-width:1592px; padding:0 24px; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap">
+      <div style="display:flex; align-items:center; gap:8px">
+        <img src="./assets/icon-truck.svg" alt="" style="width:15px; height:11px" />
+        <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Free Shipping on Orders Over $99</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:26px">
+        <div style="display:flex; align-items:center; gap:8px">
+          <img src="./assets/icon-return.svg" alt="" style="width:16px; height:16px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">30 Days easy return</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px">
+          <img src="./assets/icon-help.svg" alt="" style="width:16px; height:17px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Help Center</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:59px 0 39px">
+    <div style="width:100%; max-width:1592px; padding:0 24px; box-sizing:border-box; display:flex; align-items:center; gap:48px; flex-wrap:wrap">
+      <img src="./assets/logo.png" alt="Frozen" style="width:292px; height:63px; object-fit:contain; flex-shrink:0" />
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:0 24px 12px; box-sizing:border-box">
+    <div style="width:100%; max-width:960px; display:flex; align-items:center; gap:8px; font-size:14px; font-weight:500; color:rgb(115,115,115)">
+      <a href="./Frozen My Account.dc.html" style="color:rgb(115,115,115)">My Account</a>
+      <span>/</span>
+      <a href="./Frozen My Account.dc.html" style="color:rgb(115,115,115)">Orders</a>
+      <span>/</span>
+      <span style="color:rgb(37,43,66); font-weight:700">{{ order.number }}</span>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:8px 24px 100px; box-sizing:border-box">
+    <div style="width:100%; max-width:960px; display:flex; flex-direction:column; gap:40px">
+
+      <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap">
+        <div style="display:flex; flex-direction:column; gap:6px">
+          <span style="font-size:32px; font-weight:700; color:rgb(47,47,47)">{{ order.number }}</span>
+          <span style="font-size:14px; font-weight:400; color:rgb(115,115,115)">Placed on {{ order.date }}</span>
+        </div>
+        <div style="padding:8px 18px; border-radius:14px; background:{{ order.statusBg }}">
+          <span style="font-size:14px; font-weight:700; color:{{ order.statusColor }}">{{ order.status }}</span>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:24px; padding:32px; border-radius:20px; background:rgb(248,248,248)">
+        <span style="font-size:20px; font-weight:700; color:rgb(47,47,47)">Order Status</span>
+        <div style="display:flex; align-items:flex-start">
+          <sc-for list="{{ statusSteps }}" as="step" hint-placeholder-count="4">
+            <div style="display:flex; align-items:flex-start; flex:1; min-width:0">
+              <div style="display:flex; flex-direction:column; align-items:center; gap:10px; flex-shrink:0">
+                <div style="{{ step.dotStyle }}"></div>
+                <span style="font-size:12px; font-weight:700; text-align:center; color:{{ step.labelColor }}; max-width:90px">{{ step.label }}</span>
+                <span style="font-size:11px; font-weight:400; color:rgb(164,164,164)">{{ step.date }}</span>
+              </div>
+              <div style="{{ step.lineStyle }}"></div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:20px; padding:32px; border-radius:20px; background:rgb(255,255,255); box-shadow:0px 4px 10px 0px rgba(0,0,0,0.06)">
+        <span style="font-size:20px; font-weight:700; color:rgb(47,47,47)">Products</span>
+        <div style="display:flex; flex-direction:column; gap:16px">
+          <sc-for list="{{ products }}" as="p" hint-placeholder-count="3">
+            <div style="display:flex; gap:16px; align-items:center">
+              <div style="width:64px; height:64px; border-radius:10px; overflow:hidden; background:url(./assets/product.jpg) center / cover no-repeat; flex-shrink:0"></div>
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:4px">
+                <span style="font-size:15px; font-weight:700; color:rgb(37,43,66)">{{ p.title }}</span>
+                <span style="font-size:13px; font-weight:400; color:rgb(115,115,115)">Qty {{ p.qty }} · Size {{ p.size }}</span>
+              </div>
+              <span style="font-size:15px; font-weight:700; color:rgb(37,43,66); flex-shrink:0">{{ p.lineTotal }}</span>
+            </div>
+          </sc-for>
+        </div>
+        <div style="height:1px; background:rgb(230,230,230)"></div>
+        <div style="display:flex; justify-content:space-between; font-size:18px; font-weight:700; color:rgb(37,43,66)">
+          <span>Total</span>
+          <span>{{ order.total }}</span>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:20px; padding:32px; border-radius:20px; background:rgb(255,255,255); box-shadow:0px 4px 10px 0px rgba(0,0,0,0.06)">
+        <span style="font-size:20px; font-weight:700; color:rgb(47,47,47)">Shipping Information</span>
+        <div style="display:flex; flex-direction:column; gap:6px">
+          <span style="font-size:14px; font-weight:700; color:rgb(37,43,66)">{{ shipping.name }}</span>
+          <span style="font-size:14px; font-weight:400; color:rgb(55,55,55)">{{ shipping.line1 }}</span>
+          <span style="font-size:14px; font-weight:400; color:rgb(55,55,55)">{{ shipping.line2 }}</span>
+        </div>
+        <div style="height:1px; background:rgb(230,230,230)"></div>
+        <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:500; color:rgb(115,115,115)">
+          <span>Delivery method</span>
+          <span style="color:rgb(47,47,47); font-weight:700">{{ shipping.method }}</span>
+        </div>
+        <div style="display:flex; justify-content:space-between; font-size:14px; font-weight:500; color:rgb(115,115,115)">
+          <span>Estimated arrival</span>
+          <span style="color:rgb(47,47,47); font-weight:700">{{ shipping.eta }}</span>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:24px; padding:32px; border-radius:20px; background:rgb(255,255,255); box-shadow:0px 4px 10px 0px rgba(0,0,0,0.06)">
+        <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap">
+          <span style="font-size:20px; font-weight:700; color:rgb(47,47,47)">Tracking</span>
+          <span style="font-size:13px; font-weight:700; color:rgb(115,115,115)">Tracking #: {{ order.trackingNumber }}</span>
+        </div>
+        <div style="display:flex; flex-direction:column; gap:0">
+          <sc-for list="{{ trackingEvents }}" as="ev" hint-placeholder-count="4">
+            <div style="display:flex; gap:20px">
+              <div style="display:flex; flex-direction:column; align-items:center; flex-shrink:0">
+                <div style="{{ ev.dotStyle }}"></div>
+                <div style="{{ ev.lineStyle }}"></div>
+              </div>
+              <div style="padding-bottom:28px; display:flex; flex-direction:column; gap:4px">
+                <span style="font-size:14px; font-weight:700; color:{{ ev.titleColor }}">{{ ev.title }}</span>
+                <span style="font-size:13px; font-weight:400; color:rgb(115,115,115)">{{ ev.location }}</span>
+                <span style="font-size:12px; font-weight:400; color:rgb(164,164,164)">{{ ev.timestamp }}</span>
+              </div>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="background:rgb(26,26,26); display:flex; justify-content:center; padding:72px 24px">
+    <div style="width:100%; max-width:1592px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap">
+      <span style="font-size:16px; font-weight:700; line-height:100%; color:rgb(255,255,255)">Frozen — Trendy &amp; Stylish Outfits for Kids</span>
+      <span style="font-size:16px; font-weight:400; line-height:100%; color:rgb(178,178,178)">© 2026 Frozen. All rights reserved.</span>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const STATUS_STEP_LABELS = ["Order Placed", "Processing", "Shipped", "Delivered"];
+const CURRENT_STEP = 2; // 0-indexed: Shipped is current/active
+
+const PRODUCTS = [
+  { title: "Kids Cotton Hoodie", price: 38, qty: 1, size: "M" },
+  { title: "Ruffle Party Dress", price: 36, qty: 2, size: "4" },
+];
+
+const TRACKING_EVENTS = [
+  { title: "Order Placed", location: "Arendelle Fulfillment Center", timestamp: "Sep 8, 9:02 AM", done: true },
+  { title: "Order Processed", location: "Arendelle Fulfillment Center", timestamp: "Sep 8, 3:40 PM", done: true },
+  { title: "Shipped", location: "Regional Distribution Hub, CA", timestamp: "Sep 9, 8:15 AM", done: true },
+  { title: "In Transit", location: "En route to Arendelle, CA", timestamp: "Sep 10, 6:30 AM", done: false },
+  { title: "Delivered", location: "148 Snowflake Avenue, Apt 3B", timestamp: "Estimated Sep 12", done: false },
+];
+
+class Component extends DCLogic {
+  renderVals() {
+    const subtotal = PRODUCTS.reduce((sum, p) => sum + p.price * p.qty, 0);
+    const deliveryFee = 6.99;
+    const total = subtotal + deliveryFee;
+
+    const statusSteps = STATUS_STEP_LABELS.map((label, i) => {
+      const done = i <= CURRENT_STEP;
+      const isLast = i === STATUS_STEP_LABELS.length - 1;
+      return {
+        label,
+        date: done ? "Sep 9" : "—",
+        dotStyle: `width:20px; height:20px; border-radius:50%; background:${done ? "rgb(255,207,64)" : "rgb(230,230,230)"}; border:3px solid ${done ? "rgb(26,26,26)" : "rgb(230,230,230)"}; box-sizing:border-box`,
+        labelColor: done ? "rgb(47,47,47)" : "rgb(164,164,164)",
+        lineStyle: isLast ? "display:none" : `flex:1; height:3px; margin-top:9px; background:${i < CURRENT_STEP ? "rgb(26,26,26)" : "rgb(230,230,230)"}`,
+      };
+    });
+
+    const products = PRODUCTS.map(p => ({
+      title: p.title, qty: p.qty, size: p.size,
+      lineTotal: `$${(p.price * p.qty).toFixed(2)}`,
+    }));
+
+    const trackingEvents = TRACKING_EVENTS.map((ev, i) => ({
+      title: ev.title,
+      location: ev.location,
+      timestamp: ev.timestamp,
+      titleColor: ev.done ? "rgb(37,43,66)" : "rgb(164,164,164)",
+      dotStyle: `width:14px; height:14px; border-radius:50%; background:${ev.done ? "rgb(26,26,26)" : "rgb(230,230,230)"}; flex-shrink:0`,
+      lineStyle: i === TRACKING_EVENTS.length - 1 ? "width:2px; flex:1" : `width:2px; flex:1; background:${ev.done ? "rgb(26,26,26)" : "rgb(230,230,230)"}; min-height:36px`,
+    }));
+
+    return {
+      order: {
+        number: "#FZ-284917",
+        date: "September 8, 2026",
+        status: "Shipped",
+        statusBg: "rgb(255,236,179)",
+        statusColor: "rgb(133,94,7)",
+        total: `$${total.toFixed(2)}`,
+        trackingNumber: "1Z999FZ2849170CA",
+      },
+      statusSteps,
+      products,
+      shipping: {
+        name: "Elsa Winters",
+        line1: "148 Snowflake Avenue, Apt 3B",
+        line2: "Arendelle, CA 90210, United States",
+        method: "Standard Delivery",
+        eta: "September 10 - September 12",
+      },
+      trackingEvents,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

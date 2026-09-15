@@ -22,4 +22,9 @@ export class StorefrontCatalogController {
   browseCategoryProducts(@Req() req: Request, @Param('slug') slug: string, @Query() query: BrowseProductsDto) {
     return this.catalogService.browseProducts(req.tenantDb!, { ...query, categorySlug: slug });
   }
+
+  @Get('products/:id')
+  getProduct(@Req() req: Request, @Param('id') id: string) {
+    return this.catalogService.getProductDetail(req.tenantDb!, id);
+  }
 }
