@@ -12,21 +12,33 @@ import type { CustomerJwtAccessTokenPayload } from '@ecommerce-saas/types';
  * design.md's "separate signing secret, not just a claim check").
  */
 @Injectable()
-export class CustomerJwtStrategy extends PassportStrategy(Strategy, 'customer-jwt') {
+export class CustomerJwtStrategy extends PassportStrategy(
+  Strategy,
+  'customer-jwt',
+) {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_CUSTOMER_ACCESS_SECRET ?? 'dev-customer-access-secret-change-me',
+      secretOrKey:
+        process.env.JWT_CUSTOMER_ACCESS_SECRET ??
+        'dev-customer-access-secret-change-me',
       passReqToCallback: true,
     });
   }
 
-  validate(req: Request, payload: CustomerJwtAccessTokenPayload): CustomerJwtAccessTokenPayload {
+  validate(
+    req: Request,
+    payload: CustomerJwtAccessTokenPayload,
+  ): CustomerJwtAccessTokenPayload {
     if (!req.tenant) {
-      throw new UnauthorizedException('Tenant could not be resolved for this request');
+      throw new UnauthorizedException(
+        'Tenant could not be resolved for this request',
+      );
     }
     if (payload.tenantId !== req.tenant.id) {
-      throw new UnauthorizedException('Token tenant does not match the resolved tenant');
+      throw new UnauthorizedException(
+        'Token tenant does not match the resolved tenant',
+      );
     }
     if (payload.type !== 'customer') {
       throw new UnauthorizedException('Token is not a customer access token');

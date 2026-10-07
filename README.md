@@ -105,7 +105,8 @@ DNS, tenant resolution uses a dev-only `x-tenant-slug` header instead of a
 subdomain — the login form's "Store slug" field sends that header for you,
 so nothing extra to configure.
 
-To create a tenant to log into, call the registration endpoint directly:
+To create a tenant, sign up at `http://localhost:3000/signup` (or call the
+registration endpoint directly):
 
 ```bash
 curl -X POST http://localhost:3001/tenants/register \
@@ -119,10 +120,14 @@ curl -X POST http://localhost:3001/tenants/register \
   }'
 ```
 
-This provisions a real, isolated `tenant_acme` database (roles, default
-settings/theme, owner account) and returns once the tenant is `ACTIVE`. Then
-sign in at `http://localhost:3000/login` with store slug `acme` and the
-owner email/password above.
+Registration is verify-first: the tenant is created as `PENDING_VERIFICATION`
+and a verification email is sent (configure `SMTP_*` in `apps/api/.env`; without
+SMTP the link is logged to the API console and returned as `verificationToken`
+in the response for dev/e2e). Click the link (or POST the token to
+`/tenants/verify-email`) to provision the isolated `tenant_acme` database
+(roles, default settings/theme, owner account) and reach `ACTIVE`. Then sign in
+at `http://localhost:3000/login` with store slug `acme` and the owner
+email/password above.
 
 ## API documentation
 

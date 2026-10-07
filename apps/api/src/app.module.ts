@@ -18,6 +18,7 @@ import { CustomersModule } from './modules/customers/customers.module';
 import { InventoryModule } from './modules/inventory/inventory.module';
 import { MeController } from './modules/me/me.controller';
 import { MeModule } from './modules/me/me.module';
+import { MailModule } from './modules/mail/mail.module';
 import { OrdersAdminController } from './modules/orders/orders-admin.controller';
 import { OrdersController } from './modules/orders/orders.controller';
 import { OrdersModule } from './modules/orders/orders.module';
@@ -28,6 +29,7 @@ import { TenantModule } from './modules/tenant/tenant.module';
     ConfigModule.forRoot({ isGlobal: true }),
     PlatformDatabaseModule,
     TenantDatabaseModule,
+    MailModule,
     TenantModule,
     AuthModule,
     MeModule,

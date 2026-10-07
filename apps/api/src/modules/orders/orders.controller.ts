@@ -1,4 +1,12 @@
-import { Body, Controller, Get, Param, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Request } from 'express';
 import type { CustomerJwtAccessTokenPayload } from '@ecommerce-saas/types';
 import { CustomerAuthGuard } from '../../common/guards/customer-auth.guard';
@@ -12,7 +20,11 @@ export class OrdersController {
 
   @Post('checkout')
   checkout(@Req() req: Request, @Body() dto: CheckoutDto) {
-    return this.ordersService.checkout(req.tenantDb!, this.customerId(req), dto);
+    return this.ordersService.checkout(
+      req.tenantDb!,
+      this.customerId(req),
+      dto,
+    );
   }
 
   @Get('orders')
@@ -27,7 +39,11 @@ export class OrdersController {
 
   @Post('orders/:id/cancel')
   cancelOrder(@Req() req: Request, @Param('id') id: string) {
-    return this.ordersService.cancelOrder(req.tenantDb!, this.customerId(req), id);
+    return this.ordersService.cancelOrder(
+      req.tenantDb!,
+      this.customerId(req),
+      id,
+    );
   }
 
   private customerId(req: Request): string {

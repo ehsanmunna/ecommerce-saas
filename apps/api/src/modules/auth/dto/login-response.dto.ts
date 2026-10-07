@@ -15,7 +15,9 @@ export class LoginResponseDto {
   @ApiProperty({ description: 'JWT access token, short-lived' })
   accessToken!: string;
 
-  @ApiProperty({ description: 'Opaque refresh token, exchange via POST /auth/refresh' })
+  @ApiProperty({
+    description: 'Opaque refresh token, exchange via POST /auth/refresh',
+  })
   refreshToken!: string;
 
   @ApiProperty({ type: AuthenticatedUserDto })

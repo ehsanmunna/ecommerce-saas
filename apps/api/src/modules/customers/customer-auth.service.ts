@@ -1,4 +1,8 @@
-import { ConflictException, Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  ConflictException,
+  Injectable,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'node:crypto';
@@ -32,13 +36,22 @@ export class CustomerAuthService {
     return { id: customer.id, email: customer.email };
   }
 
-  async login(tenant: Tenant, tenantDb: TenantPrismaClient, email: string, password: string) {
+  async login(
+    tenant: Tenant,
+    tenantDb: TenantPrismaClient,
+    email: string,
+    password: string,
+  ) {
     const customer = await tenantDb.customer.findUnique({ where: { email } });
     if (!customer || !(await bcrypt.compare(password, customer.passwordHash))) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const accessToken = this.signAccessToken({ sub: customer.id, tenantId: tenant.id, type: 'customer' });
+    const accessToken = this.signAccessToken({
+      sub: customer.id,
+      tenantId: tenant.id,
+      type: 'customer',
+    });
     const refreshToken = await this.issueRefreshToken(tenantDb, customer.id);
 
     return {
@@ -48,12 +61,20 @@ export class CustomerAuthService {
     };
   }
 
-  async refresh(tenant: Tenant, tenantDb: TenantPrismaClient, refreshToken: string) {
+  async refresh(
+    tenant: Tenant,
+    tenantDb: TenantPrismaClient,
+    refreshToken: string,
+  ) {
     const tokenHash = this.hashToken(refreshToken);
-    const stored = await tenantDb.customerRefreshToken.findFirst({ where: { tokenHash } });
+    const stored = await tenantDb.customerRefreshToken.findFirst({
+      where: { tokenHash },
+    });
 
     if (!stored || stored.revokedAt || stored.expiresAt < new Date()) {
-      throw new UnauthorizedException('Refresh token is invalid, expired, or revoked');
+      throw new UnauthorizedException(
+        'Refresh token is invalid, expired, or revoked',
+      );
     }
 
     const accessToken = this.signAccessToken({
@@ -64,7 +85,10 @@ export class CustomerAuthService {
     return { accessToken };
   }
 
-  async revoke(tenantDb: TenantPrismaClient, refreshToken: string): Promise<void> {
+  async revoke(
+    tenantDb: TenantPrismaClient,
+    refreshToken: string,
+  ): Promise<void> {
     const tokenHash = this.hashToken(refreshToken);
     await tenantDb.customerRefreshToken.updateMany({
       where: { tokenHash, revokedAt: null },
@@ -74,12 +98,17 @@ export class CustomerAuthService {
 
   private signAccessToken(payload: CustomerJwtAccessTokenPayload): string {
     return this.jwtService.sign(payload, {
-      secret: process.env.JWT_CUSTOMER_ACCESS_SECRET ?? 'dev-customer-access-secret-change-me',
+      secret:
+        process.env.JWT_CUSTOMER_ACCESS_SECRET ??
+        'dev-customer-access-secret-change-me',
       expiresIn: ACCESS_TOKEN_TTL,
     });
   }
 
-  private async issueRefreshToken(tenantDb: TenantPrismaClient, customerId: string): Promise<string> {
+  private async issueRefreshToken(
+    tenantDb: TenantPrismaClient,
+    customerId: string,
+  ): Promise<string> {
     const refreshToken = crypto.randomBytes(48).toString('hex');
     await tenantDb.customerRefreshToken.create({
       data: {

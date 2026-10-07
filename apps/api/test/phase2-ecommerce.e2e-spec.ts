@@ -22,14 +22,28 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
     const slug = unique(prefix);
     const ownerEmail = `owner@${slug}.test`;
     const ownerPassword = 'supersecret123';
-    await request(app.getHttpServer())
+    const regRes = await request(app.getHttpServer())
       .post('/tenants/register')
-      .send({ companyName: slug, slug, ownerEmail, ownerPassword, plan: 'BASIC' })
+      .send({
+        companyName: slug,
+        slug,
+        ownerEmail,
+        ownerPassword,
+        plan: 'BASIC',
+      })
+      .expect(201);
+    await request(app.getHttpServer())
+      .post('/tenants/verify-email')
+      .send({ token: regRes.body.verificationToken })
       .expect(201);
     return { slug, ownerEmail, ownerPassword };
   }
 
-  async function loginStaff(slug: string, email: string, password: string): Promise<string> {
+  async function loginStaff(
+    slug: string,
+    email: string,
+    password: string,
+  ): Promise<string> {
     const res = await request(app.getHttpServer())
       .post('/auth/login')
       .set('x-tenant-slug', slug)
@@ -54,7 +68,11 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
     return { email, accessToken: res.body.accessToken as string };
   }
 
-  async function createCategory(slug: string, staffToken: string, name: string) {
+  async function createCategory(
+    slug: string,
+    staffToken: string,
+    name: string,
+  ) {
     const res = await request(app.getHttpServer())
       .post('/categories')
       .set('x-tenant-slug', slug)
@@ -90,7 +108,12 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
     return { product, variant: variantRes.body, price };
   }
 
-  function addToCart(slug: string, accessToken: string, variantId: string, quantity: number) {
+  function addToCart(
+    slug: string,
+    accessToken: string,
+    variantId: string,
+    quantity: number,
+  ) {
     return request(app.getHttpServer())
       .post('/storefront/cart/items')
       .set('x-tenant-slug', slug)
@@ -122,7 +145,13 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
     }).compile();
 
     app = moduleFixture.createNestApplication();
-    app.useGlobalPipes(new ValidationPipe({ whitelist: true, forbidNonWhitelisted: true, transform: true }));
+    app.useGlobalPipes(
+      new ValidationPipe({
+        whitelist: true,
+        forbidNonWhitelisted: true,
+        transform: true,
+      }),
+    );
     await app.init();
   });
 
@@ -132,16 +161,39 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
 
   it('browses, filters, and paginates the catalog, excluding inactive products (8.1)', async () => {
     const tenant = await registerTenant('catalog');
-    const staffToken = await loginStaff(tenant.slug, tenant.ownerEmail, tenant.ownerPassword);
-    const category = await createCategory(tenant.slug, staffToken, 'Electronics');
+    const staffToken = await loginStaff(
+      tenant.slug,
+      tenant.ownerEmail,
+      tenant.ownerPassword,
+    );
+    const category = await createCategory(
+      tenant.slug,
+      staffToken,
+      'Electronics',
+    );
 
-    const { product: cheap } = await createProductWithVariant(tenant.slug, staffToken, category.id, { price: 10 });
-    const { product: expensive } = await createProductWithVariant(tenant.slug, staffToken, category.id, {
-      price: 100,
-    });
-    const { product: toDeactivate } = await createProductWithVariant(tenant.slug, staffToken, category.id, {
-      price: 15,
-    });
+    const { product: cheap } = await createProductWithVariant(
+      tenant.slug,
+      staffToken,
+      category.id,
+      { price: 10 },
+    );
+    const { product: expensive } = await createProductWithVariant(
+      tenant.slug,
+      staffToken,
+      category.id,
+      {
+        price: 100,
+      },
+    );
+    const { product: toDeactivate } = await createProductWithVariant(
+      tenant.slug,
+      staffToken,
+      category.id,
+      {
+        price: 15,
+      },
+    );
 
     await request(app.getHttpServer())
       .post(`/products/${toDeactivate.id}/deactivate`)
@@ -163,25 +215,39 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
       .query({ search: cheap.name })
       .set('x-tenant-slug', tenant.slug)
       .expect(200);
-    expect(searchRes.body.items.map((p: { id: string }) => p.id)).toEqual([cheap.id]);
+    expect(searchRes.body.items.map((p: { id: string }) => p.id)).toEqual([
+      cheap.id,
+    ]);
 
     const priceFiltered = await request(app.getHttpServer())
       .get('/storefront/products')
       .query({ minPrice: 5, maxPrice: 20 })
       .set('x-tenant-slug', tenant.slug)
       .expect(200);
-    const filteredIds = priceFiltered.body.items.map((p: { id: string }) => p.id);
+    const filteredIds = priceFiltered.body.items.map(
+      (p: { id: string }) => p.id,
+    );
     expect(filteredIds).toContain(cheap.id);
     expect(filteredIds).not.toContain(expensive.id);
 
     const page1 = await request(app.getHttpServer())
       .get('/storefront/products')
-      .query({ categorySlug: category.slug, pageSize: 1, page: 1, sort: 'price_asc' })
+      .query({
+        categorySlug: category.slug,
+        pageSize: 1,
+        page: 1,
+        sort: 'price_asc',
+      })
       .set('x-tenant-slug', tenant.slug)
       .expect(200);
     const page2 = await request(app.getHttpServer())
       .get('/storefront/products')
-      .query({ categorySlug: category.slug, pageSize: 1, page: 2, sort: 'price_asc' })
+      .query({
+        categorySlug: category.slug,
+        pageSize: 1,
+        page: 2,
+        sort: 'price_asc',
+      })
       .set('x-tenant-slug', tenant.slug)
       .expect(200);
     expect(page1.body.items).toHaveLength(1);
@@ -191,7 +257,11 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
 
   it('rejects a customer token on a staff route and a staff token on a customer route (8.2)', async () => {
     const tenant = await registerTenant('boundary');
-    const staffToken = await loginStaff(tenant.slug, tenant.ownerEmail, tenant.ownerPassword);
+    const staffToken = await loginStaff(
+      tenant.slug,
+      tenant.ownerEmail,
+      tenant.ownerPassword,
+    );
     const category = await createCategory(tenant.slug, staffToken, 'Cat');
     const customer = await registerAndLoginCustomer(tenant.slug);
 
@@ -229,17 +299,33 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
 
   it('enforces stock bounds on cart operations and recomputes totals (8.4)', async () => {
     const tenant = await registerTenant('cart');
-    const staffToken = await loginStaff(tenant.slug, tenant.ownerEmail, tenant.ownerPassword);
+    const staffToken = await loginStaff(
+      tenant.slug,
+      tenant.ownerEmail,
+      tenant.ownerPassword,
+    );
     const category = await createCategory(tenant.slug, staffToken, 'Cat');
-    const { variant } = await createProductWithVariant(tenant.slug, staffToken, category.id, {
-      price: 20,
-      stock: 3,
-    });
+    const { variant } = await createProductWithVariant(
+      tenant.slug,
+      staffToken,
+      category.id,
+      {
+        price: 20,
+        stock: 3,
+      },
+    );
     const customer = await registerAndLoginCustomer(tenant.slug);
 
-    await addToCart(tenant.slug, customer.accessToken, variant.id, 5).expect(409);
+    await addToCart(tenant.slug, customer.accessToken, variant.id, 5).expect(
+      409,
+    );
 
-    const addRes = await addToCart(tenant.slug, customer.accessToken, variant.id, 2).expect(201);
+    const addRes = await addToCart(
+      tenant.slug,
+      customer.accessToken,
+      variant.id,
+      2,
+    ).expect(201);
     expect(addRes.body.subtotal).toBeCloseTo(40);
     expect(addRes.body.total).toBeCloseTo(45);
 
@@ -271,14 +357,25 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
 
   it('applies a valid coupon and rejects an invalid/unknown one (8.5)', async () => {
     const tenant = await registerTenant('coupon');
-    const staffToken = await loginStaff(tenant.slug, tenant.ownerEmail, tenant.ownerPassword);
+    const staffToken = await loginStaff(
+      tenant.slug,
+      tenant.ownerEmail,
+      tenant.ownerPassword,
+    );
     const category = await createCategory(tenant.slug, staffToken, 'Cat');
-    const { variant } = await createProductWithVariant(tenant.slug, staffToken, category.id, {
-      price: 50,
-      stock: 5,
-    });
+    const { variant } = await createProductWithVariant(
+      tenant.slug,
+      staffToken,
+      category.id,
+      {
+        price: 50,
+        stock: 5,
+      },
+    );
     const customer = await registerAndLoginCustomer(tenant.slug);
-    await addToCart(tenant.slug, customer.accessToken, variant.id, 1).expect(201);
+    await addToCart(tenant.slug, customer.accessToken, variant.id, 1).expect(
+      201,
+    );
 
     await request(app.getHttpServer())
       .post('/storefront/cart/coupon')
@@ -307,17 +404,30 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
 
   it('allows exactly one of two concurrent checkouts for the last unit to succeed (8.6)', async () => {
     const tenant = await registerTenant('concurrency');
-    const staffToken = await loginStaff(tenant.slug, tenant.ownerEmail, tenant.ownerPassword);
+    const staffToken = await loginStaff(
+      tenant.slug,
+      tenant.ownerEmail,
+      tenant.ownerPassword,
+    );
     const category = await createCategory(tenant.slug, staffToken, 'Cat');
-    const { variant } = await createProductWithVariant(tenant.slug, staffToken, category.id, {
-      price: 30,
-      stock: 1,
-    });
+    const { variant } = await createProductWithVariant(
+      tenant.slug,
+      staffToken,
+      category.id,
+      {
+        price: 30,
+        stock: 1,
+      },
+    );
 
     const customerA = await registerAndLoginCustomer(tenant.slug);
     const customerB = await registerAndLoginCustomer(tenant.slug);
-    await addToCart(tenant.slug, customerA.accessToken, variant.id, 1).expect(201);
-    await addToCart(tenant.slug, customerB.accessToken, variant.id, 1).expect(201);
+    await addToCart(tenant.slug, customerA.accessToken, variant.id, 1).expect(
+      201,
+    );
+    await addToCart(tenant.slug, customerB.accessToken, variant.id, 1).expect(
+      201,
+    );
 
     const [resA, resB] = await Promise.all([
       checkout(tenant.slug, customerA.accessToken),
@@ -331,23 +441,38 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
       .get('/storefront/products')
       .set('x-tenant-slug', tenant.slug)
       .expect(200);
-    const found = productsRes.body.items[0].variants.find((v: { id: string }) => v.id === variant.id);
+    const found = productsRes.body.items[0].variants.find(
+      (v: { id: string }) => v.id === variant.id,
+    );
     expect(found.stock).toBe(0);
   });
 
   it('creates an order, decrements stock, and empties the cart on success; rejects checkout when out of stock (8.7)', async () => {
     const tenant = await registerTenant('checkout');
-    const staffToken = await loginStaff(tenant.slug, tenant.ownerEmail, tenant.ownerPassword);
+    const staffToken = await loginStaff(
+      tenant.slug,
+      tenant.ownerEmail,
+      tenant.ownerPassword,
+    );
     const category = await createCategory(tenant.slug, staffToken, 'Cat');
-    const { variant, product } = await createProductWithVariant(tenant.slug, staffToken, category.id, {
-      price: 10,
-      stock: 5,
-    });
+    const { variant, product } = await createProductWithVariant(
+      tenant.slug,
+      staffToken,
+      category.id,
+      {
+        price: 10,
+        stock: 5,
+      },
+    );
 
     const customer = await registerAndLoginCustomer(tenant.slug);
-    await addToCart(tenant.slug, customer.accessToken, variant.id, 2).expect(201);
+    await addToCart(tenant.slug, customer.accessToken, variant.id, 2).expect(
+      201,
+    );
 
-    const orderRes = await checkout(tenant.slug, customer.accessToken).expect(201);
+    const orderRes = await checkout(tenant.slug, customer.accessToken).expect(
+      201,
+    );
     expect(orderRes.body.status).toBe('PENDING');
     expect(orderRes.body.paymentStatus).toBe('PENDING');
     expect(orderRes.body.items).toHaveLength(1);
@@ -363,17 +488,26 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
       .get('/storefront/products')
       .set('x-tenant-slug', tenant.slug)
       .expect(200);
-    const found = productsRes.body.items.find((p: { id: string }) => p.id === product.id);
+    const found = productsRes.body.items.find(
+      (p: { id: string }) => p.id === product.id,
+    );
     expect(found.variants[0].stock).toBe(3);
 
     // Second customer depletes remaining stock, then a third checkout attempt
     // (with a stale cart quantity) should be rejected and change nothing.
     const depleter = await registerAndLoginCustomer(tenant.slug);
-    await addToCart(tenant.slug, depleter.accessToken, variant.id, 3).expect(201);
+    await addToCart(tenant.slug, depleter.accessToken, variant.id, 3).expect(
+      201,
+    );
     await checkout(tenant.slug, depleter.accessToken).expect(201);
 
     const lateCustomer = await registerAndLoginCustomer(tenant.slug);
-    await addToCart(tenant.slug, lateCustomer.accessToken, variant.id, 1).expect(409); // already 0 stock
+    await addToCart(
+      tenant.slug,
+      lateCustomer.accessToken,
+      variant.id,
+      1,
+    ).expect(409); // already 0 stock
 
     // Force a stale-cart scenario: add while stock still available isn't
     // possible here since stock is now 0, so instead verify a fresh add is
@@ -389,15 +523,28 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
 
   it('restores stock on cancellation and rejects cancelling a shipped order (8.8)', async () => {
     const tenant = await registerTenant('cancel');
-    const staffToken = await loginStaff(tenant.slug, tenant.ownerEmail, tenant.ownerPassword);
+    const staffToken = await loginStaff(
+      tenant.slug,
+      tenant.ownerEmail,
+      tenant.ownerPassword,
+    );
     const category = await createCategory(tenant.slug, staffToken, 'Cat');
-    const { variant, product } = await createProductWithVariant(tenant.slug, staffToken, category.id, {
-      price: 10,
-      stock: 5,
-    });
+    const { variant, product } = await createProductWithVariant(
+      tenant.slug,
+      staffToken,
+      category.id,
+      {
+        price: 10,
+        stock: 5,
+      },
+    );
     const customer = await registerAndLoginCustomer(tenant.slug);
-    await addToCart(tenant.slug, customer.accessToken, variant.id, 2).expect(201);
-    const order = (await checkout(tenant.slug, customer.accessToken).expect(201)).body;
+    await addToCart(tenant.slug, customer.accessToken, variant.id, 2).expect(
+      201,
+    );
+    const order = (
+      await checkout(tenant.slug, customer.accessToken).expect(201)
+    ).body;
 
     const cancelRes = await request(app.getHttpServer())
       .post(`/storefront/orders/${order.id}/cancel`)
@@ -410,12 +557,18 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
       .get('/storefront/products')
       .set('x-tenant-slug', tenant.slug)
       .expect(200);
-    const found = productsRes.body.items.find((p: { id: string }) => p.id === product.id);
+    const found = productsRes.body.items.find(
+      (p: { id: string }) => p.id === product.id,
+    );
     expect(found.variants[0].stock).toBe(5);
 
     // Place and ship a second order, then confirm cancellation is rejected.
-    await addToCart(tenant.slug, customer.accessToken, variant.id, 1).expect(201);
-    const order2 = (await checkout(tenant.slug, customer.accessToken).expect(201)).body;
+    await addToCart(tenant.slug, customer.accessToken, variant.id, 1).expect(
+      201,
+    );
+    const order2 = (
+      await checkout(tenant.slug, customer.accessToken).expect(201)
+    ).body;
     await request(app.getHttpServer())
       .patch(`/orders/${order2.id}/status`)
       .set('x-tenant-slug', tenant.slug)
@@ -438,17 +591,30 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
 
   it("rejects viewing another customer's order or profile (8.9)", async () => {
     const tenant = await registerTenant('privacy');
-    const staffToken = await loginStaff(tenant.slug, tenant.ownerEmail, tenant.ownerPassword);
+    const staffToken = await loginStaff(
+      tenant.slug,
+      tenant.ownerEmail,
+      tenant.ownerPassword,
+    );
     const category = await createCategory(tenant.slug, staffToken, 'Cat');
-    const { variant } = await createProductWithVariant(tenant.slug, staffToken, category.id, {
-      price: 10,
-      stock: 5,
-    });
+    const { variant } = await createProductWithVariant(
+      tenant.slug,
+      staffToken,
+      category.id,
+      {
+        price: 10,
+        stock: 5,
+      },
+    );
 
     const customerA = await registerAndLoginCustomer(tenant.slug);
     const customerB = await registerAndLoginCustomer(tenant.slug);
-    await addToCart(tenant.slug, customerA.accessToken, variant.id, 1).expect(201);
-    const order = (await checkout(tenant.slug, customerA.accessToken).expect(201)).body;
+    await addToCart(tenant.slug, customerA.accessToken, variant.id, 1).expect(
+      201,
+    );
+    const order = (
+      await checkout(tenant.slug, customerA.accessToken).expect(201)
+    ).body;
 
     await request(app.getHttpServer())
       .get(`/storefront/orders/${order.id}`)

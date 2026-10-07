@@ -1,4 +1,15 @@
-import { Body, Controller, Delete, Get, NotFoundException, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  NotFoundException,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Request } from 'express';
 import type { CustomerJwtAccessTokenPayload } from '@ecommerce-saas/types';
 import { CustomerAuthGuard } from '../../common/guards/customer-auth.guard';
@@ -28,7 +39,10 @@ export class CustomerMeController {
   }
 
   @Patch()
-  async updateProfile(@Req() req: Request, @Body() dto: UpdateCustomerProfileDto) {
+  async updateProfile(
+    @Req() req: Request,
+    @Body() dto: UpdateCustomerProfileDto,
+  ) {
     const payload = req.user as CustomerJwtAccessTokenPayload;
     const customer = await req.tenantDb!.customer.update({
       where: { id: payload.sub },
@@ -53,7 +67,9 @@ export class CustomerMeController {
   @Delete('addresses/:id')
   async removeAddress(@Req() req: Request, @Param('id') id: string) {
     const payload = req.user as CustomerJwtAccessTokenPayload;
-    const address = await req.tenantDb!.customerAddress.findUnique({ where: { id } });
+    const address = await req.tenantDb!.customerAddress.findUnique({
+      where: { id },
+    });
     if (!address || address.customerId !== payload.sub) {
       throw new NotFoundException('Address not found');
     }

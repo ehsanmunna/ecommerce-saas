@@ -14,7 +14,11 @@ export class OrdersAdminController {
   constructor(private readonly ordersService: OrdersService) {}
 
   @Patch(':id/status')
-  updateStatus(@Req() req: Request, @Param('id') id: string, @Body() dto: UpdateOrderStatusDto) {
+  updateStatus(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() dto: UpdateOrderStatusDto,
+  ) {
     return this.ordersService.updateStatus(req.tenantDb!, id, dto.status);
   }
 }

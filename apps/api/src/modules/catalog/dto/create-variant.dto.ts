@@ -1,4 +1,11 @@
-import { IsInt, IsNumber, IsObject, IsOptional, IsString, Min } from 'class-validator';
+import {
+  IsInt,
+  IsNumber,
+  IsObject,
+  IsOptional,
+  IsString,
+  Min,
+} from 'class-validator';
 
 export class CreateVariantDto {
   @IsString()

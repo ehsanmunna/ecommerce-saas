@@ -1,4 +1,12 @@
-import { Body, Controller, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Request } from 'express';
 import { Roles } from '../../common/decorators/roles.decorator';
 import { JwtAuthGuard } from '../../common/guards/jwt-auth.guard';
@@ -31,7 +39,11 @@ export class CatalogAdminController {
   }
 
   @Patch('products/:id')
-  updateProduct(@Req() req: Request, @Param('id') id: string, @Body() dto: UpdateProductDto) {
+  updateProduct(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() dto: UpdateProductDto,
+  ) {
     return this.catalogService.updateProduct(req.tenantDb!, id, dto);
   }
 
@@ -41,7 +53,11 @@ export class CatalogAdminController {
   }
 
   @Post('products/:id/variants')
-  createVariant(@Req() req: Request, @Param('id') id: string, @Body() dto: CreateVariantDto) {
+  createVariant(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() dto: CreateVariantDto,
+  ) {
     return this.catalogService.createVariant(req.tenantDb!, id, dto);
   }
 }

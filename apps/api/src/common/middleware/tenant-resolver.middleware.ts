@@ -1,4 +1,9 @@
-import { Injectable, NestMiddleware, NotFoundException, ServiceUnavailableException } from '@nestjs/common';
+import {
+  Injectable,
+  NestMiddleware,
+  NotFoundException,
+  ServiceUnavailableException,
+} from '@nestjs/common';
 import { NextFunction, Request, Response } from 'express';
 import { PlatformPrismaService } from '../../database/platform/platform-prisma.service';
 import { TenantConnectionService } from '../../database/tenant/tenant-connection.service';
@@ -24,12 +29,16 @@ export class TenantResolverMiddleware implements NestMiddleware {
       throw new NotFoundException('Unable to resolve tenant from request host');
     }
 
-    const tenant = await this.platformPrisma.tenant.findUnique({ where: { slug } });
+    const tenant = await this.platformPrisma.tenant.findUnique({
+      where: { slug },
+    });
     if (!tenant) {
       throw new NotFoundException(`No tenant registered for "${slug}"`);
     }
     if (tenant.status !== 'ACTIVE') {
-      throw new ServiceUnavailableException(`Tenant "${slug}" is not currently active (status: ${tenant.status})`);
+      throw new ServiceUnavailableException(
+        `Tenant "${slug}" is not currently active (status: ${tenant.status})`,
+      );
     }
 
     req.tenant = tenant;

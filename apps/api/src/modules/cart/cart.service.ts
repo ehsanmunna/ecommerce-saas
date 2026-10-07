@@ -1,5 +1,14 @@
-import { BadRequestException, ConflictException, ForbiddenException, Injectable, NotFoundException } from '@nestjs/common';
-import type { Prisma, PrismaClient as TenantPrismaClient } from '@prisma-clients/tenant';
+import {
+  BadRequestException,
+  ConflictException,
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import type {
+  Prisma,
+  PrismaClient as TenantPrismaClient,
+} from '@prisma-clients/tenant';
 import { CreateCouponDto } from './dto/create-coupon.dto';
 
 const SHIPPING_FEE = Number(process.env.STOREFRONT_SHIPPING_FEE ?? 5);
@@ -23,9 +32,16 @@ export class CartService {
     return this.buildView(tenantDb, cart);
   }
 
-  async addItem(tenantDb: TenantPrismaClient, customerId: string, variantId: string, quantity: number) {
+  async addItem(
+    tenantDb: TenantPrismaClient,
+    customerId: string,
+    variantId: string,
+    quantity: number,
+  ) {
     const cart = await this.getOrCreateCart(tenantDb, customerId);
-    const variant = await tenantDb.productVariant.findUnique({ where: { id: variantId } });
+    const variant = await tenantDb.productVariant.findUnique({
+      where: { id: variantId },
+    });
     if (!variant) {
       throw new NotFoundException('Product variant not found');
     }
@@ -39,42 +55,73 @@ export class CartService {
     }
 
     if (existingItem) {
-      await tenantDb.cartItem.update({ where: { id: existingItem.id }, data: { quantity: newQuantity } });
+      await tenantDb.cartItem.update({
+        where: { id: existingItem.id },
+        data: { quantity: newQuantity },
+      });
     } else {
-      await tenantDb.cartItem.create({ data: { cartId: cart.id, variantId, quantity } });
+      await tenantDb.cartItem.create({
+        data: { cartId: cart.id, variantId, quantity },
+      });
     }
 
     return this.getCartView(tenantDb, customerId);
   }
 
-  async updateItemQuantity(tenantDb: TenantPrismaClient, customerId: string, itemId: string, quantity: number) {
+  async updateItemQuantity(
+    tenantDb: TenantPrismaClient,
+    customerId: string,
+    itemId: string,
+    quantity: number,
+  ) {
     const item = await this.getOwnedItem(tenantDb, customerId, itemId);
     if (quantity > item.variant.stock) {
       throw new ConflictException('Requested quantity exceeds available stock');
     }
-    await tenantDb.cartItem.update({ where: { id: itemId }, data: { quantity } });
+    await tenantDb.cartItem.update({
+      where: { id: itemId },
+      data: { quantity },
+    });
     return this.getCartView(tenantDb, customerId);
   }
 
-  async removeItem(tenantDb: TenantPrismaClient, customerId: string, itemId: string) {
+  async removeItem(
+    tenantDb: TenantPrismaClient,
+    customerId: string,
+    itemId: string,
+  ) {
     await this.getOwnedItem(tenantDb, customerId, itemId);
     await tenantDb.cartItem.delete({ where: { id: itemId } });
     return this.getCartView(tenantDb, customerId);
   }
 
-  async applyCoupon(tenantDb: TenantPrismaClient, customerId: string, code: string) {
+  async applyCoupon(
+    tenantDb: TenantPrismaClient,
+    customerId: string,
+    code: string,
+  ) {
     const coupon = await tenantDb.coupon.findUnique({ where: { code } });
-    if (!coupon || !coupon.isActive || (coupon.expiresAt && coupon.expiresAt < new Date())) {
+    if (
+      !coupon ||
+      !coupon.isActive ||
+      (coupon.expiresAt && coupon.expiresAt < new Date())
+    ) {
       throw new BadRequestException('Invalid or expired coupon code');
     }
     const cart = await this.getOrCreateCart(tenantDb, customerId);
-    await tenantDb.cart.update({ where: { id: cart.id }, data: { couponCode: code } });
+    await tenantDb.cart.update({
+      where: { id: cart.id },
+      data: { couponCode: code },
+    });
     return this.getCartView(tenantDb, customerId);
   }
 
   async removeCoupon(tenantDb: TenantPrismaClient, customerId: string) {
     const cart = await this.getOrCreateCart(tenantDb, customerId);
-    await tenantDb.cart.update({ where: { id: cart.id }, data: { couponCode: null } });
+    await tenantDb.cart.update({
+      where: { id: cart.id },
+      data: { couponCode: null },
+    });
     return this.getCartView(tenantDb, customerId);
   }
 
@@ -106,7 +153,11 @@ export class CartService {
     return tenantDb.coupon.update({ where: { id }, data: { isActive: false } });
   }
 
-  private async getOwnedItem(tenantDb: TenantPrismaClient, customerId: string, itemId: string) {
+  private async getOwnedItem(
+    tenantDb: TenantPrismaClient,
+    customerId: string,
+    itemId: string,
+  ) {
     const item = await tenantDb.cartItem.findUnique({
       where: { id: itemId },
       include: { cart: true, variant: true },
@@ -117,18 +168,25 @@ export class CartService {
     return item;
   }
 
-  private async getCartWithItems(tenantDb: TenantPrismaClient, customerId: string): Promise<CartWithItems> {
+  private async getCartWithItems(
+    tenantDb: TenantPrismaClient,
+    customerId: string,
+  ): Promise<CartWithItems> {
     const cart = await this.getOrCreateCart(tenantDb, customerId);
     return tenantDb.cart.findUniqueOrThrow({
       where: { id: cart.id },
-      include: { items: { include: { variant: { include: { product: true } } } } },
+      include: {
+        items: { include: { variant: { include: { product: true } } } },
+      },
     });
   }
 
   private async buildView(tenantDb: TenantPrismaClient, cart: CartWithItems) {
     let subtotal = 0;
     const items = cart.items.map((item) => {
-      const unitPrice = Number(item.variant.priceOverride ?? item.variant.product.price);
+      const unitPrice = Number(
+        item.variant.priceOverride ?? item.variant.product.price,
+      );
       const lineTotal = unitPrice * item.quantity;
       subtotal += lineTotal;
       return {
@@ -144,8 +202,14 @@ export class CartService {
 
     let discount = 0;
     if (cart.couponCode) {
-      const coupon = await tenantDb.coupon.findUnique({ where: { code: cart.couponCode } });
-      if (coupon && coupon.isActive && (!coupon.expiresAt || coupon.expiresAt >= new Date())) {
+      const coupon = await tenantDb.coupon.findUnique({
+        where: { code: cart.couponCode },
+      });
+      if (
+        coupon &&
+        coupon.isActive &&
+        (!coupon.expiresAt || coupon.expiresAt >= new Date())
+      ) {
         discount =
           coupon.discountType === 'PERCENTAGE'
             ? subtotal * (Number(coupon.discountValue) / 100)

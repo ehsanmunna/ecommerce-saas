@@ -7,7 +7,7 @@
     "packages/*"
   ],
   "scripts": {
-    "dev:api": "npm run start:dev --workspace=apps/api",
+    "dev:api": "npm run start:dev --workspace=apps/api --debug --watch",
     "dev:admin": "npm run dev --workspace=apps/admin",
     "dev:storefront": "npm run dev --workspace=apps/storefront",
     "test:api": "npm run test --workspace=apps/api",

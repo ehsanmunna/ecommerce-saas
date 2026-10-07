@@ -9,6 +9,7 @@ datasource db {
 }
 
 enum TenantStatus {
+  PENDING_VERIFICATION
   PROVISIONING
   ACTIVE
   PROVISIONING_FAILED
@@ -29,6 +30,13 @@ model Tenant {
   // Cleared once the tenant reaches ACTIVE.
   ownerEmail        String? @map("owner_email")
   ownerPasswordHash String? @map("owner_password_hash")
+
+  // Email verification (verify-first signup). Token is stored hashed,
+  // single-use, with an expiry. Cleared once provisioning starts.
+  emailVerifiedAt         DateTime? @map("email_verified_at")
+  verificationTokenHash   String?   @unique @map("verification_token_hash")
+  verificationExpiresAt   DateTime? @map("verification_expires_at")
+  lastVerificationSentAt  DateTime? @map("last_verification_sent_at")
 
   createdAt    DateTime     @default(now()) @map("created_at")
   updatedAt    DateTime     @updatedAt @map("updated_at")

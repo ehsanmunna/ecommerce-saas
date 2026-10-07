@@ -1,5 +1,12 @@
-import { BadRequestException, Injectable, NotFoundException } from '@nestjs/common';
-import type { OrderStatus, PrismaClient as TenantPrismaClient } from '@prisma-clients/tenant';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
+import type {
+  OrderStatus,
+  PrismaClient as TenantPrismaClient,
+} from '@prisma-clients/tenant';
 import { CartService } from '../cart/cart.service';
 import { InventoryService } from '../inventory/inventory.service';
 import { CheckoutDto } from './dto/checkout.dto';
@@ -21,7 +28,11 @@ export class OrdersService {
    * InventoryService throws and the whole transaction rolls back: no
    * order, no partial inventory change, no cart mutation.
    */
-  async checkout(tenantDb: TenantPrismaClient, customerId: string, dto: CheckoutDto) {
+  async checkout(
+    tenantDb: TenantPrismaClient,
+    customerId: string,
+    dto: CheckoutDto,
+  ) {
     const cartView = await this.cartService.getCartView(tenantDb, customerId);
     if (cartView.items.length === 0) {
       throw new BadRequestException('Cart is empty');
@@ -29,7 +40,11 @@ export class OrdersService {
 
     return tenantDb.$transaction(async (tx) => {
       for (const item of cartView.items) {
-        await this.inventoryService.decrementStock(tx, item.variantId, item.quantity);
+        await this.inventoryService.decrementStock(
+          tx,
+          item.variantId,
+          item.quantity,
+        );
       }
 
       const order = await tx.order.create({
@@ -62,7 +77,10 @@ export class OrdersService {
       });
 
       await tx.cartItem.deleteMany({ where: { cartId: cartView.id } });
-      await tx.cart.update({ where: { id: cartView.id }, data: { couponCode: null } });
+      await tx.cart.update({
+        where: { id: cartView.id },
+        data: { couponCode: null },
+      });
 
       return order;
     });
@@ -76,8 +94,15 @@ export class OrdersService {
     });
   }
 
-  async getOrder(tenantDb: TenantPrismaClient, customerId: string, orderId: string) {
-    const order = await tenantDb.order.findUnique({ where: { id: orderId }, include: { items: true } });
+  async getOrder(
+    tenantDb: TenantPrismaClient,
+    customerId: string,
+    orderId: string,
+  ) {
+    const order = await tenantDb.order.findUnique({
+      where: { id: orderId },
+      include: { items: true },
+    });
     if (!order || order.customerId !== customerId) {
       throw new NotFoundException('Order not found');
     }
@@ -85,7 +110,11 @@ export class OrdersService {
   }
 
   /** Staff-only forward transition: PENDING -> CONFIRMED -> SHIPPED -> DELIVERED, one step at a time. */
-  async updateStatus(tenantDb: TenantPrismaClient, orderId: string, targetStatus: string) {
+  async updateStatus(
+    tenantDb: TenantPrismaClient,
+    orderId: string,
+    targetStatus: string,
+  ) {
     const order = await tenantDb.order.findUnique({ where: { id: orderId } });
     if (!order) {
       throw new NotFoundException('Order not found');
@@ -93,7 +122,9 @@ export class OrdersService {
     const currentIndex = STATUS_SEQUENCE.indexOf(order.status);
     const targetIndex = STATUS_SEQUENCE.indexOf(targetStatus);
     if (currentIndex === -1 || targetIndex !== currentIndex + 1) {
-      throw new BadRequestException(`Cannot transition order from ${order.status} to ${targetStatus}`);
+      throw new BadRequestException(
+        `Cannot transition order from ${order.status} to ${targetStatus}`,
+      );
     }
     return tenantDb.order.update({
       where: { id: orderId },
@@ -101,7 +132,11 @@ export class OrdersService {
     });
   }
 
-  async cancelOrder(tenantDb: TenantPrismaClient, customerId: string, orderId: string) {
+  async cancelOrder(
+    tenantDb: TenantPrismaClient,
+    customerId: string,
+    orderId: string,
+  ) {
     const order = await this.getOrder(tenantDb, customerId, orderId);
     if (!CANCELLABLE_STATUSES.has(order.status)) {
       throw new BadRequestException('Order can no longer be cancelled');
@@ -109,9 +144,16 @@ export class OrdersService {
 
     await tenantDb.$transaction(async (tx) => {
       for (const item of order.items) {
-        await this.inventoryService.restoreStock(tx, item.variantId, item.quantity);
+        await this.inventoryService.restoreStock(
+          tx,
+          item.variantId,
+          item.quantity,
+        );
       }
-      await tx.order.update({ where: { id: orderId }, data: { status: 'CANCELLED' } });
+      await tx.order.update({
+        where: { id: orderId },
+        data: { status: 'CANCELLED' },
+      });
     });
 
     return this.getOrder(tenantDb, customerId, orderId);

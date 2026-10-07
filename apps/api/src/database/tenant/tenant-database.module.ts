@@ -5,7 +5,15 @@ import { TenantMigrationService } from './tenant-migration.service';
 
 @Global()
 @Module({
-  providers: [TenantConnectionService, TenantDatabaseAdminService, TenantMigrationService],
-  exports: [TenantConnectionService, TenantDatabaseAdminService, TenantMigrationService],
+  providers: [
+    TenantConnectionService,
+    TenantDatabaseAdminService,
+    TenantMigrationService,
+  ],
+  exports: [
+    TenantConnectionService,
+    TenantDatabaseAdminService,
+    TenantMigrationService,
+  ],
 })
 export class TenantDatabaseModule {}

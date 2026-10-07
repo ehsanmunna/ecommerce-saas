@@ -1,4 +1,14 @@
-import { Body, Controller, Delete, Get, Param, Patch, Post, Req, UseGuards } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
 import { Request } from 'express';
 import type { CustomerJwtAccessTokenPayload } from '@ecommerce-saas/types';
 import { CustomerAuthGuard } from '../../common/guards/customer-auth.guard';
@@ -19,22 +29,44 @@ export class CartController {
 
   @Post('items')
   addItem(@Req() req: Request, @Body() dto: AddCartItemDto) {
-    return this.cartService.addItem(req.tenantDb!, this.customerId(req), dto.variantId, dto.quantity);
+    return this.cartService.addItem(
+      req.tenantDb!,
+      this.customerId(req),
+      dto.variantId,
+      dto.quantity,
+    );
   }
 
   @Patch('items/:itemId')
-  updateItem(@Req() req: Request, @Param('itemId') itemId: string, @Body() dto: UpdateCartItemDto) {
-    return this.cartService.updateItemQuantity(req.tenantDb!, this.customerId(req), itemId, dto.quantity);
+  updateItem(
+    @Req() req: Request,
+    @Param('itemId') itemId: string,
+    @Body() dto: UpdateCartItemDto,
+  ) {
+    return this.cartService.updateItemQuantity(
+      req.tenantDb!,
+      this.customerId(req),
+      itemId,
+      dto.quantity,
+    );
   }
 
   @Delete('items/:itemId')
   removeItem(@Req() req: Request, @Param('itemId') itemId: string) {
-    return this.cartService.removeItem(req.tenantDb!, this.customerId(req), itemId);
+    return this.cartService.removeItem(
+      req.tenantDb!,
+      this.customerId(req),
+      itemId,
+    );
   }
 
   @Post('coupon')
   applyCoupon(@Req() req: Request, @Body() dto: ApplyCouponDto) {
-    return this.cartService.applyCoupon(req.tenantDb!, this.customerId(req), dto.code);
+    return this.cartService.applyCoupon(
+      req.tenantDb!,
+      this.customerId(req),
+      dto.code,
+    );
   }
 
   @Delete('coupon')

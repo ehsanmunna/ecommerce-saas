@@ -72,3 +72,81 @@ export interface MeResponse {
 export function fetchMe(tenantSlug: string, accessToken: string): Promise<MeResponse> {
   return request<MeResponse>('/me', { tenantSlug, accessToken });
 }
+
+export interface RegisterTenantRequest {
+  companyName: string;
+  slug: string;
+  ownerEmail: string;
+  ownerPassword: string;
+  plan: string;
+}
+
+export interface RegisterTenantResponse {
+  id: string;
+  name: string;
+  slug: string;
+  status: string;
+  verificationToken?: string;
+}
+
+export function registerTenant(data: RegisterTenantRequest): Promise<RegisterTenantResponse> {
+  return request<RegisterTenantResponse>('/tenants/register', {
+    method: 'POST',
+    body: JSON.stringify(data),
+  });
+}
+
+export interface CheckSlugResponse {
+  available: boolean;
+  reason?: 'invalid' | 'reserved' | 'taken';
+}
+
+export function checkSlug(slug: string): Promise<CheckSlugResponse> {
+  return request<CheckSlugResponse>(`/tenants/check-slug?slug=${encodeURIComponent(slug)}`);
+}
+
+export interface VerifyEmailResponse {
+  id: string;
+  name: string;
+  slug: string;
+  status: string;
+}
+
+export function verifyEmail(token: string): Promise<VerifyEmailResponse> {
+  return request<VerifyEmailResponse>('/tenants/verify-email', {
+    method: 'POST',
+    body: JSON.stringify({ token }),
+  });
+}
+
+export interface TenantStatusResponse {
+  id: string;
+  name: string;
+  slug: string;
+  status: string;
+}
+
+export function getTenantStatus(tenantId: string): Promise<TenantStatusResponse> {
+  return request<TenantStatusResponse>(`/tenants/${tenantId}/status`);
+}
+
+export interface ResendVerificationResponse {
+  id: string;
+  name: string;
+  slug: string;
+  status: string;
+  verificationToken?: string;
+}
+
+export function resendVerification(tenantId: string): Promise<ResendVerificationResponse> {
+  return request<ResendVerificationResponse>(`/tenants/${tenantId}/resend-verification`, {
+    method: 'POST',
+  });
+}
+
+export function resendVerificationBySlug(slug: string): Promise<ResendVerificationResponse> {
+  return request<ResendVerificationResponse>('/tenants/resend-verification-by-slug', {
+    method: 'POST',
+    body: JSON.stringify({ slug }),
+  });
+}

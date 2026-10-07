@@ -11,17 +11,32 @@ export class CustomerAuthController {
 
   @Post('register')
   register(@Req() req: Request, @Body() dto: RegisterCustomerDto) {
-    return this.customerAuthService.register(req.tenantDb!, dto.email, dto.password, dto.firstName, dto.lastName);
+    return this.customerAuthService.register(
+      req.tenantDb!,
+      dto.email,
+      dto.password,
+      dto.firstName,
+      dto.lastName,
+    );
   }
 
   @Post('login')
   login(@Req() req: Request, @Body() dto: LoginDto) {
-    return this.customerAuthService.login(req.tenant!, req.tenantDb!, dto.email, dto.password);
+    return this.customerAuthService.login(
+      req.tenant!,
+      req.tenantDb!,
+      dto.email,
+      dto.password,
+    );
   }
 
   @Post('refresh')
   refresh(@Req() req: Request, @Body() dto: RefreshTokenDto) {
-    return this.customerAuthService.refresh(req.tenant!, req.tenantDb!, dto.refreshToken);
+    return this.customerAuthService.refresh(
+      req.tenant!,
+      req.tenantDb!,
+      dto.refreshToken,
+    );
   }
 
   @Post('logout')
