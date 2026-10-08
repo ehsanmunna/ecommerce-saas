@@ -15,17 +15,28 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   constructor() {
     super({
       jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
-      secretOrKey: process.env.JWT_ACCESS_SECRET ?? 'dev-access-secret-change-me',
+      secretOrKey:
+        process.env.JWT_ACCESS_SECRET ?? 'dev-access-secret-change-me',
       passReqToCallback: true,
     });
   }
 
-  validate(req: Request, payload: JwtAccessTokenPayload): JwtAccessTokenPayload {
+  validate(
+    req: Request,
+    payload: JwtAccessTokenPayload,
+  ): JwtAccessTokenPayload {
     if (!req.tenant) {
-      throw new UnauthorizedException('Tenant could not be resolved for this request');
+      throw new UnauthorizedException(
+        'Tenant could not be resolved for this request',
+      );
     }
     if (payload.tenantId !== req.tenant.id) {
-      throw new UnauthorizedException('Token tenant does not match the resolved tenant');
+      throw new UnauthorizedException(
+        'Token tenant does not match the resolved tenant',
+      );
+    }
+    if (payload.type !== 'staff') {
+      throw new UnauthorizedException('Token is not a staff access token');
     }
     return payload;
   }

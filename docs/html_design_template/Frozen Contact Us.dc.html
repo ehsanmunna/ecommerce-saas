@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: rgb(255,255,255); -webkit-font-smoothing: antialiased; }
+  a { color: rgb(37,43,66); text-decoration: none; }
+  a:hover { color: rgb(229,160,0); }
+  ::placeholder { color: rgb(164,164,164); }
+</style>
+</helmet>
+<div style="width:100%; background:rgb(255,255,255); font-family:Inter, Helvetica, Arial, sans-serif; color:rgb(47,47,47); overflow-x:hidden">
+
+  <div style="height:50px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center">
+    <div style="width:100%; max-width:1592px; padding:0 24px; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap">
+      <div style="display:flex; align-items:center; gap:8px">
+        <img src="./assets/icon-truck.svg" alt="" style="width:15px; height:11px" />
+        <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Free Shipping on Orders Over $99</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px">
+        <img src="./assets/icon-help.svg" alt="" style="width:16px; height:17px" />
+        <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Help Center</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:59px 0 39px">
+    <div style="width:100%; max-width:1592px; padding:0 24px; box-sizing:border-box">
+      <a href="./Frozen Home.dc.html"><img src="./assets/logo.png" alt="Frozen" style="width:292px; height:63px; object-fit:contain" /></a>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-direction:column; align-items:center; padding:8px 24px 56px; box-sizing:border-box">
+    <span style="font-size:44px; font-weight:700; color:rgb(47,47,47)">Contact Us</span>
+    <span style="font-size:16px; font-weight:400; color:rgb(115,115,115); margin-top:12px">We'd love to hear from you</span>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:0 24px 120px; box-sizing:border-box">
+    <div style="width:100%; max-width:1200px; display:grid; grid-template-columns:minmax(280px,380px) minmax(0,1fr); gap:56px">
+
+      <div style="display:flex; flex-direction:column; gap:32px">
+        <div style="display:flex; gap:16px; align-items:flex-start">
+          <img src="./assets/icon-help.svg" alt="" style="width:24px; height:26px; flex-shrink:0; margin-top:2px" />
+          <div style="display:flex; flex-direction:column; gap:6px">
+            <span style="font-size:16px; font-weight:700; color:rgb(47,47,47)">Customer Support</span>
+            <span style="font-size:14px; font-weight:400; color:rgb(55,55,55)">support@frozen-kids.com</span>
+            <span style="font-size:14px; font-weight:400; color:rgb(55,55,55)">Mon–Fri, 9am–6pm EST</span>
+          </div>
+        </div>
+        <div style="display:flex; gap:16px; align-items:flex-start">
+          <img src="./assets/icon-user.svg" alt="" style="width:24px; height:24px; flex-shrink:0; margin-top:2px" />
+          <div style="display:flex; flex-direction:column; gap:6px">
+            <span style="font-size:16px; font-weight:700; color:rgb(47,47,47)">Phone</span>
+            <span style="font-size:14px; font-weight:400; color:rgb(55,55,55)">+1 (800) 555-0142</span>
+          </div>
+        </div>
+        <div style="display:flex; gap:16px; align-items:flex-start">
+          <img src="./assets/icon-truck.svg" alt="" style="width:24px; height:18px; flex-shrink:0; margin-top:2px" />
+          <div style="display:flex; flex-direction:column; gap:6px">
+            <span style="font-size:16px; font-weight:700; color:rgb(47,47,47)">Headquarters</span>
+            <span style="font-size:14px; font-weight:400; color:rgb(55,55,55)">148 Snowflake Avenue, Suite 200</span>
+            <span style="font-size:14px; font-weight:400; color:rgb(55,55,55)">Arendelle, CA 90210, United States</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:16px; padding:36px; border-radius:20px; background:rgb(248,248,248); box-sizing:border-box">
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+          <input value="{{ form.name }}" onChange="{{ setField_name }}" placeholder="Your name" style="{{ inputStyle }}" />
+          <input value="{{ form.email }}" onChange="{{ setField_email }}" placeholder="Email address" style="{{ inputStyle }}" />
+        </div>
+        <input value="{{ form.subject }}" onChange="{{ setField_subject }}" placeholder="Subject" style="{{ inputStyleFull }}" />
+        <textarea value="{{ form.message }}" onChange="{{ setField_message }}" placeholder="Your message" style="height:140px; padding:14px 18px; border-radius:12px; border:2px solid rgb(230,230,230); background:rgb(255,255,255); font-family:Inter, sans-serif; font-size:14px; color:rgb(47,47,47); box-sizing:border-box; outline:none; resize:vertical"></textarea>
+        <div style="width:fit-content; height:51px; padding:0 32px; border-radius:20px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center; cursor:pointer" onClick="{{ submit }}" style-hover="background:rgb(255,172,51)">
+          <span style="font-size:16px; font-weight:700; color:rgb(54,54,54)">Send Message</span>
+        </div>
+        <sc-if value="{{ sent }}" hint-placeholder-val="{{ false }}">
+        <span style="font-size:13px; font-weight:700; color:rgb(84,163,73)">Thanks! We'll get back to you within one business day.</span>
+        </sc-if>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:rgb(26,26,26); display:flex; justify-content:center; padding:72px 24px">
+    <div style="width:100%; max-width:1592px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap">
+      <span style="font-size:16px; font-weight:700; line-height:100%; color:rgb(255,255,255)">Frozen — Trendy &amp; Stylish Outfits for Kids</span>
+      <span style="font-size:16px; font-weight:400; line-height:100%; color:rgb(178,178,178)">© 2026 Frozen. All rights reserved.</span>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const INPUT_STYLE = "height:48px; padding:0 16px; border-radius:12px; border:2px solid rgb(230,230,230); background:rgb(255,255,255); font-family:Inter, sans-serif; font-size:14px; color:rgb(47,47,47); box-sizing:border-box; outline:none";
+
+class Component extends DCLogic {
+  state = {
+    form: { name: "", email: "", subject: "", message: "" },
+    sent: false,
+  };
+
+  setField(name, value) {
+    this.setState(s => ({ form: { ...s.form, [name]: value } }));
+  }
+
+  renderVals() {
+    const fieldSetters = {};
+    ["name", "email", "subject", "message"].forEach(name => {
+      fieldSetters[`setField_${name}`] = (e) => this.setField(name, e.target.value);
+    });
+    return {
+      form: this.state.form,
+      ...fieldSetters,
+      inputStyle: INPUT_STYLE,
+      inputStyleFull: `${INPUT_STYLE}; grid-column:1 / -1`,
+      submit: () => this.setState({ sent: true }),
+      sent: this.state.sent,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

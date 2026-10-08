@@ -19,15 +19,29 @@ export class AuthController {
   @ApiResponse({ status: 201, type: LoginResponseDto })
   @ApiResponse({ status: 401, description: 'Invalid credentials' })
   login(@Req() req: Request, @Body() dto: LoginDto) {
-    return this.authService.login(req.tenant!, req.tenantDb!, dto.email, dto.password);
+    return this.authService.login(
+      req.tenant!,
+      req.tenantDb!,
+      dto.email,
+      dto.password,
+    );
   }
 
   @Post('refresh')
-  @ApiOperation({ summary: 'Exchange a valid refresh token for a new access token' })
+  @ApiOperation({
+    summary: 'Exchange a valid refresh token for a new access token',
+  })
   @ApiResponse({ status: 201, type: RefreshResponseDto })
-  @ApiResponse({ status: 401, description: 'Refresh token is invalid, expired, or revoked' })
+  @ApiResponse({
+    status: 401,
+    description: 'Refresh token is invalid, expired, or revoked',
+  })
   refresh(@Req() req: Request, @Body() dto: RefreshTokenDto) {
-    return this.authService.refresh(req.tenant!, req.tenantDb!, dto.refreshToken);
+    return this.authService.refresh(
+      req.tenant!,
+      req.tenantDb!,
+      dto.refreshToken,
+    );
   }
 
   @Post('logout')

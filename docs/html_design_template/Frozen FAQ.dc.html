@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: rgb(255,255,255); -webkit-font-smoothing: antialiased; }
+  a { color: rgb(37,43,66); text-decoration: none; }
+  a:hover { color: rgb(229,160,0); }
+</style>
+</helmet>
+<div style="width:100%; background:rgb(255,255,255); font-family:Inter, Helvetica, Arial, sans-serif; color:rgb(47,47,47); overflow-x:hidden">
+
+  <div style="height:50px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center">
+    <div style="width:100%; max-width:1592px; padding:0 24px; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap">
+      <div style="display:flex; align-items:center; gap:8px">
+        <img src="./assets/icon-truck.svg" alt="" style="width:15px; height:11px" />
+        <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Free Shipping on Orders Over $99</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:8px">
+        <img src="./assets/icon-help.svg" alt="" style="width:16px; height:17px" />
+        <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Help Center</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:59px 0 39px">
+    <div style="width:100%; max-width:1592px; padding:0 24px; box-sizing:border-box">
+      <a href="./Frozen Home.dc.html"><img src="./assets/logo.png" alt="Frozen" style="width:292px; height:63px; object-fit:contain" /></a>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-direction:column; align-items:center; padding:8px 24px 56px; box-sizing:border-box">
+    <span style="font-size:44px; font-weight:700; color:rgb(47,47,47)">Frequently Asked Questions</span>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:0 24px 140px; box-sizing:border-box">
+    <div style="width:100%; max-width:820px; display:flex; flex-direction:column; gap:16px">
+      <sc-for list="{{ faqs }}" as="faq" hint-placeholder-count="8">
+        <div style="border-radius:16px; border:2px solid rgb(230,230,230); overflow:hidden">
+          <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; padding:20px 24px; cursor:pointer" onClick="{{ faq.toggle }}">
+            <span style="font-size:16px; font-weight:700; color:rgb(47,47,47)">{{ faq.question }}</span>
+            <span style="font-size:22px; font-weight:400; color:rgb(115,115,115); flex-shrink:0">{{ faq.icon }}</span>
+          </div>
+          <sc-if value="{{ faq.open }}" hint-placeholder-val="{{ false }}">
+          <div style="padding:0 24px 22px; font-size:15px; font-weight:400; line-height:160%; color:rgb(55,55,55)">{{ faq.answer }}</div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <div style="background:rgb(26,26,26); display:flex; justify-content:center; padding:72px 24px">
+    <div style="width:100%; max-width:1592px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap">
+      <span style="font-size:16px; font-weight:700; line-height:100%; color:rgb(255,255,255)">Frozen — Trendy &amp; Stylish Outfits for Kids</span>
+      <span style="font-size:16px; font-weight:400; line-height:100%; color:rgb(178,178,178)">© 2026 Frozen. All rights reserved.</span>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const FAQS = [
+  { q: "What sizes do you offer?", a: "We offer sizes from Newborn through age 12, including half sizes for growing kids. Check each product's size chart for exact measurements." },
+  { q: "How long does shipping take?", a: "Standard delivery takes 5-7 business days, express delivery 2-3 business days, and overnight delivery arrives the next business day. Orders over $99 ship free." },
+  { q: "What is your return policy?", a: "We offer 30-day easy returns on unworn items with tags attached. Returns are free and refunds are processed within 5-7 business days of receipt." },
+  { q: "Can I change or cancel my order?", a: "Orders can be changed or cancelled within 1 hour of placing them. After that, please contact support and we'll do our best to help." },
+  { q: "Do you ship internationally?", a: "Yes, we currently ship to over 30 countries. International shipping rates and delivery times are calculated at checkout." },
+  { q: "How do I track my order?", a: "Once your order ships, you'll receive a tracking link by email. You can also view live tracking from the Orders tab in My Account." },
+  { q: "Are your materials safe for sensitive skin?", a: "All our fabrics are OEKO-TEX certified, meaning they're tested for harmful substances and safe for even the most sensitive skin." },
+  { q: "Do you offer gift cards?", a: "Yes, digital gift cards are available in denominations from $25 to $200 and never expire." },
+];
+
+class Component extends DCLogic {
+  state = { openIndex: 0 };
+
+  renderVals() {
+    const faqs = FAQS.map((f, i) => {
+      const open = this.state.openIndex === i;
+      return {
+        question: f.q,
+        answer: f.a,
+        open,
+        icon: open ? "−" : "+",
+        toggle: () => this.setState(s => ({ openIndex: s.openIndex === i ? -1 : i })),
+      };
+    });
+    return { faqs };
+  }
+}
+
+</script>
+</body>
+</html>

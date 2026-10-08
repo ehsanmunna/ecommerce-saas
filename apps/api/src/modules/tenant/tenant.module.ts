@@ -6,6 +6,6 @@ import { TenantRegistrationService } from './tenant-registration.service';
 @Module({
   controllers: [TenantController],
   providers: [TenantRegistrationService, TenantProvisioningService],
-  exports: [TenantProvisioningService],
+  exports: [TenantProvisioningService, TenantRegistrationService],
 })
 export class TenantModule {}

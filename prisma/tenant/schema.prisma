@@ -64,3 +64,203 @@ model Theme {
 
   @@map("themes")
 }
+
+// --- Phase 2: Ecommerce ---
+
+model Category {
+  id        String   @id @default(uuid())
+  name      String
+  slug      String   @unique
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  products Product[]
+
+  @@map("categories")
+}
+
+model Product {
+  id          String   @id @default(uuid())
+  name        String
+  description String?
+  price       Decimal  @db.Decimal(10, 2)
+  categoryId  String   @map("category_id")
+  isActive    Boolean  @default(true) @map("is_active")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  category Category         @relation(fields: [categoryId], references: [id])
+  variants ProductVariant[]
+
+  @@map("products")
+}
+
+model ProductVariant {
+  id            String   @id @default(uuid())
+  productId     String   @map("product_id")
+  sku           String   @unique
+  attributes    Json?
+  priceOverride Decimal? @map("price_override") @db.Decimal(10, 2)
+  stock         Int      @default(0)
+  createdAt     DateTime @default(now()) @map("created_at")
+  updatedAt     DateTime @updatedAt @map("updated_at")
+
+  product    Product     @relation(fields: [productId], references: [id])
+  cartItems  CartItem[]
+  orderItems OrderItem[]
+
+  @@map("product_variants")
+}
+
+model Customer {
+  id           String   @id @default(uuid())
+  email        String   @unique
+  passwordHash String   @map("password_hash")
+  firstName    String?  @map("first_name")
+  lastName     String?  @map("last_name")
+  createdAt    DateTime @default(now()) @map("created_at")
+  updatedAt    DateTime @updatedAt @map("updated_at")
+
+  refreshTokens CustomerRefreshToken[]
+  addresses     CustomerAddress[]
+  cart          Cart?
+  orders        Order[]
+
+  @@map("customers")
+}
+
+model CustomerRefreshToken {
+  id         String    @id @default(uuid())
+  customerId String    @map("customer_id")
+  tokenHash  String    @map("token_hash")
+  expiresAt  DateTime  @map("expires_at")
+  revokedAt  DateTime? @map("revoked_at")
+  createdAt  DateTime  @default(now()) @map("created_at")
+
+  customer Customer @relation(fields: [customerId], references: [id])
+
+  @@map("customer_refresh_tokens")
+}
+
+model CustomerAddress {
+  id         String   @id @default(uuid())
+  customerId String   @map("customer_id")
+  recipient  String
+  line1      String
+  line2      String?
+  city       String
+  region     String?
+  postalCode String   @map("postal_code")
+  country    String
+  isDefault  Boolean  @default(false) @map("is_default")
+  createdAt  DateTime @default(now()) @map("created_at")
+
+  customer Customer @relation(fields: [customerId], references: [id])
+
+  @@map("customer_addresses")
+}
+
+enum CouponDiscountType {
+  PERCENTAGE
+  FIXED
+}
+
+model Coupon {
+  id            String             @id @default(uuid())
+  code          String             @unique
+  discountType  CouponDiscountType @map("discount_type")
+  discountValue Decimal            @map("discount_value") @db.Decimal(10, 2)
+  expiresAt     DateTime?          @map("expires_at")
+  isActive      Boolean            @default(true) @map("is_active")
+  createdAt     DateTime           @default(now()) @map("created_at")
+
+  @@map("coupons")
+}
+
+model Cart {
+  id         String   @id @default(uuid())
+  customerId String   @unique @map("customer_id")
+  couponCode String?  @map("coupon_code")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  customer Customer   @relation(fields: [customerId], references: [id])
+  items    CartItem[]
+
+  @@map("carts")
+}
+
+model CartItem {
+  id        String   @id @default(uuid())
+  cartId    String   @map("cart_id")
+  variantId String   @map("variant_id")
+  quantity  Int
+  createdAt DateTime @default(now()) @map("created_at")
+  updatedAt DateTime @updatedAt @map("updated_at")
+
+  cart    Cart           @relation(fields: [cartId], references: [id])
+  variant ProductVariant @relation(fields: [variantId], references: [id])
+
+  @@unique([cartId, variantId])
+  @@map("cart_items")
+}
+
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  FAILED
+}
+
+enum DeliveryMethod {
+  STANDARD
+  EXPRESS
+}
+
+model Order {
+  id                 String         @id @default(uuid())
+  customerId         String         @map("customer_id")
+  status             OrderStatus    @default(PENDING)
+  paymentStatus      PaymentStatus  @default(PENDING) @map("payment_status")
+  paymentMethod      String         @map("payment_method")
+  deliveryMethod     DeliveryMethod @map("delivery_method")
+  shippingRecipient  String         @map("shipping_recipient")
+  shippingLine1      String         @map("shipping_line1")
+  shippingLine2      String?        @map("shipping_line2")
+  shippingCity       String         @map("shipping_city")
+  shippingRegion     String?        @map("shipping_region")
+  shippingPostalCode String         @map("shipping_postal_code")
+  shippingCountry    String         @map("shipping_country")
+  couponCode         String?        @map("coupon_code")
+  subtotal           Decimal        @db.Decimal(10, 2)
+  shipping           Decimal        @db.Decimal(10, 2)
+  total              Decimal        @db.Decimal(10, 2)
+  createdAt          DateTime       @default(now()) @map("created_at")
+  updatedAt          DateTime       @updatedAt @map("updated_at")
+
+  customer Customer    @relation(fields: [customerId], references: [id])
+  items    OrderItem[]
+
+  @@map("orders")
+}
+
+model OrderItem {
+  id        String   @id @default(uuid())
+  orderId   String   @map("order_id")
+  variantId String   @map("variant_id")
+  quantity  Int
+  unitPrice Decimal  @map("unit_price") @db.Decimal(10, 2)
+  createdAt DateTime @default(now()) @map("created_at")
+
+  order   Order          @relation(fields: [orderId], references: [id])
+  variant ProductVariant @relation(fields: [variantId], references: [id])
+
+  @@map("order_items")
+}

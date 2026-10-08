@@ -13,13 +13,26 @@ const REFRESH_TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000;
 export class AuthService {
   constructor(private readonly jwtService: JwtService) {}
 
-  async login(tenant: Tenant, tenantDb: TenantPrismaClient, email: string, password: string) {
-    const user = await tenantDb.user.findUnique({ where: { email }, include: { role: true } });
+  async login(
+    tenant: Tenant,
+    tenantDb: TenantPrismaClient,
+    email: string,
+    password: string,
+  ) {
+    const user = await tenantDb.user.findUnique({
+      where: { email },
+      include: { role: true },
+    });
     if (!user || !(await bcrypt.compare(password, user.passwordHash))) {
       throw new UnauthorizedException('Invalid credentials');
     }
 
-    const accessToken = this.signAccessToken({ sub: user.id, tenantId: tenant.id, role: user.role.name });
+    const accessToken = this.signAccessToken({
+      sub: user.id,
+      tenantId: tenant.id,
+      role: user.role.name,
+      type: 'staff',
+    });
     const refreshToken = await this.issueRefreshToken(tenantDb, user.id);
 
     return {
@@ -29,7 +42,11 @@ export class AuthService {
     };
   }
 
-  async refresh(tenant: Tenant, tenantDb: TenantPrismaClient, refreshToken: string) {
+  async refresh(
+    tenant: Tenant,
+    tenantDb: TenantPrismaClient,
+    refreshToken: string,
+  ) {
     const tokenHash = this.hashToken(refreshToken);
     const stored = await tenantDb.refreshToken.findFirst({
       where: { tokenHash },
@@ -37,19 +54,25 @@ export class AuthService {
     });
 
     if (!stored || stored.revokedAt || stored.expiresAt < new Date()) {
-      throw new UnauthorizedException('Refresh token is invalid, expired, or revoked');
+      throw new UnauthorizedException(
+        'Refresh token is invalid, expired, or revoked',
+      );
     }
 
     const accessToken = this.signAccessToken({
       sub: stored.user.id,
       tenantId: tenant.id,
       role: stored.user.role.name,
+      type: 'staff',
     });
 
     return { accessToken };
   }
 
-  async revoke(tenantDb: TenantPrismaClient, refreshToken: string): Promise<void> {
+  async revoke(
+    tenantDb: TenantPrismaClient,
+    refreshToken: string,
+  ): Promise<void> {
     const tokenHash = this.hashToken(refreshToken);
     await tenantDb.refreshToken.updateMany({
       where: { tokenHash, revokedAt: null },
@@ -64,7 +87,10 @@ export class AuthService {
     });
   }
 
-  private async issueRefreshToken(tenantDb: TenantPrismaClient, userId: string): Promise<string> {
+  private async issueRefreshToken(
+    tenantDb: TenantPrismaClient,
+    userId: string,
+  ): Promise<string> {
     const refreshToken = crypto.randomBytes(48).toString('hex');
     await tenantDb.refreshToken.create({
       data: {

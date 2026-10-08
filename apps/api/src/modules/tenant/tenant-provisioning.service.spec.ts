@@ -20,10 +20,16 @@ const baseTenant = {
 
 describe('TenantProvisioningService', () => {
   let service: TenantProvisioningService;
-  let platformPrisma: { tenant: { findUniqueOrThrow: jest.Mock; update: jest.Mock } };
+  let platformPrisma: {
+    tenant: { findUniqueOrThrow: jest.Mock; update: jest.Mock };
+  };
   let dbAdmin: { createDatabase: jest.Mock; dropDatabaseIfExists: jest.Mock };
   let migrations: { deploy: jest.Mock };
-  let connections: { buildConnectionUrl: jest.Mock; getClient: jest.Mock; evict: jest.Mock };
+  let connections: {
+    buildConnectionUrl: jest.Mock;
+    getClient: jest.Mock;
+    evict: jest.Mock;
+  };
 
   beforeEach(async () => {
     platformPrisma = {
@@ -69,13 +75,21 @@ describe('TenantProvisioningService', () => {
       data: { status: 'PROVISIONING_FAILED' },
     });
     expect(platformPrisma.tenant.update).not.toHaveBeenCalledWith(
-      expect.objectContaining({ data: expect.objectContaining({ status: 'ACTIVE' }) }),
+      expect.objectContaining({
+        data: expect.objectContaining({ status: 'ACTIVE' }),
+      }),
     );
   });
 
   it('marks the tenant ACTIVE and seeds defaults when every step succeeds', async () => {
     const seededClient = {
-      role: { create: jest.fn().mockImplementation(({ data }) => Promise.resolve({ id: `role-${data.name}`, ...data })) },
+      role: {
+        create: jest
+          .fn()
+          .mockImplementation(({ data }) =>
+            Promise.resolve({ id: `role-${data.name}`, ...data }),
+          ),
+      },
       settings: { create: jest.fn().mockResolvedValue(undefined) },
       theme: { create: jest.fn().mockResolvedValue(undefined) },
       user: { create: jest.fn().mockResolvedValue(undefined) },
@@ -87,7 +101,11 @@ describe('TenantProvisioningService', () => {
 
     expect(seededClient.user.create).toHaveBeenCalledWith(
       expect.objectContaining({
-        data: expect.objectContaining({ email: 'owner@acme.test', passwordHash: 'hashed', roleId: 'role-OWNER' }),
+        data: expect.objectContaining({
+          email: 'owner@acme.test',
+          passwordHash: 'hashed',
+          roleId: 'role-OWNER',
+        }),
       }),
     );
     expect(platformPrisma.tenant.update).toHaveBeenCalledWith({
@@ -98,9 +116,14 @@ describe('TenantProvisioningService', () => {
   });
 
   it('refuses to retry a tenant that is not PROVISIONING_FAILED', async () => {
-    platformPrisma.tenant.findUniqueOrThrow.mockResolvedValue({ ...baseTenant, status: 'ACTIVE' });
+    platformPrisma.tenant.findUniqueOrThrow.mockResolvedValue({
+      ...baseTenant,
+      status: 'ACTIVE',
+    });
 
-    await expect(service.retry('tenant-1')).rejects.toThrow(BadRequestException);
+    await expect(service.retry('tenant-1')).rejects.toThrow(
+      BadRequestException,
+    );
     expect(dbAdmin.dropDatabaseIfExists).not.toHaveBeenCalled();
   });
 });

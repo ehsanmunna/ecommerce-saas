@@ -7,7 +7,9 @@ const VALID_DATABASE_NAME = /^[a-z][a-z0-9_]*$/;
 export class TenantDatabaseAdminService {
   private readonly logger = new Logger(TenantDatabaseAdminService.name);
 
-  private async withMaintenanceClient<T>(fn: (client: Client) => Promise<T>): Promise<T> {
+  private async withMaintenanceClient<T>(
+    fn: (client: Client) => Promise<T>,
+  ): Promise<T> {
     const client = new Client({
       host: process.env.TENANT_DB_HOST ?? 'localhost',
       port: Number(process.env.TENANT_DB_PORT ?? 5432),
@@ -30,19 +32,37 @@ export class TenantDatabaseAdminService {
    */
   private assertSafeDatabaseName(databaseName: string): void {
     if (!VALID_DATABASE_NAME.test(databaseName)) {
-      throw new Error(`Refusing to operate on unsafe database name: ${databaseName}`);
+      throw new Error(
+        `Refusing to operate on unsafe database name: ${databaseName}`,
+      );
     }
   }
 
   async createDatabase(databaseName: string): Promise<void> {
     this.assertSafeDatabaseName(databaseName);
     await this.withMaintenanceClient(async (client) => {
-      const exists = await client.query('SELECT 1 FROM pg_database WHERE datname = $1', [databaseName]);
+      const exists = await client.query(
+        'SELECT 1 FROM pg_database WHERE datname = $1',
+        [databaseName],
+      );
       if ((exists.rowCount ?? 0) > 0) {
-        this.logger.warn(`Database "${databaseName}" already exists, skipping creation`);
+        this.logger.warn(
+          `Database "${databaseName}" already exists, skipping creation`,
+        );
         return;
       }
       await client.query(`CREATE DATABASE "${databaseName}"`);
+    });
+  }
+
+  async databaseExists(databaseName: string): Promise<boolean> {
+    this.assertSafeDatabaseName(databaseName);
+    return this.withMaintenanceClient(async (client) => {
+      const result = await client.query(
+        'SELECT 1 FROM pg_database WHERE datname = $1',
+        [databaseName],
+      );
+      return (result.rowCount ?? 0) > 0;
     });
   }
 

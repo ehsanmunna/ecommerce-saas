@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: rgb(255,255,255); -webkit-font-smoothing: antialiased; }
+  a { color: rgb(37,43,66); text-decoration: none; }
+  a:hover { color: rgb(229,160,0); }
+  ::placeholder { color: rgb(164,164,164); }
+</style>
+</helmet>
+<div style="width:100%; background:rgb(255,255,255); font-family:Inter, Helvetica, Arial, sans-serif; color:rgb(47,47,47); overflow-x:hidden">
+
+  <div style="height:50px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center">
+    <div style="width:100%; max-width:1592px; padding:0 24px; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap">
+      <div style="display:flex; align-items:center; gap:8px">
+        <img src="./assets/icon-truck.svg" alt="" style="width:15px; height:11px" />
+        <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Free Shipping on Orders Over $99</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:26px">
+        <div style="display:flex; align-items:center; gap:8px">
+          <img src="./assets/icon-return.svg" alt="" style="width:16px; height:16px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">30 Days easy return</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px">
+          <img src="./assets/icon-help.svg" alt="" style="width:16px; height:17px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Help Center</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:59px 0 39px">
+    <div style="width:100%; max-width:1592px; padding:0 24px; box-sizing:border-box; display:flex; align-items:center; gap:48px; flex-wrap:wrap">
+      <img src="./assets/logo.png" alt="Frozen" style="width:292px; height:63px; object-fit:contain; flex-shrink:0" />
+      <div style="flex:1"></div>
+      <div style="display:flex; align-items:center; gap:8px; flex-shrink:0">
+        <img src="./assets/icon-cart.svg" alt="" style="width:24px; height:24px" />
+        <span style="font-size:14px; font-weight:700; color:rgb(0,0,0)">Secure Checkout</span>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-direction:column; align-items:center; padding:8px 24px 48px; box-sizing:border-box">
+    <div style="font-size:44px; font-weight:700; line-height:100%; color:rgb(47,47,47)">Checkout</div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:0 24px 120px; box-sizing:border-box">
+    <div style="width:100%; max-width:1592px; display:grid; grid-template-columns:minmax(0,1fr) 380px; gap:48px">
+
+      <div style="display:flex; flex-direction:column; gap:40px; min-width:0">
+
+        <div style="display:flex; flex-direction:column; gap:20px">
+          <div style="font-size:22px; font-weight:700; color:rgb(47,47,47)">Customer Information</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+            <input value="{{ form.firstName }}" onChange="{{ setField_firstName }}" placeholder="First name" style="{{ inputStyle }}" />
+            <input value="{{ form.lastName }}" onChange="{{ setField_lastName }}" placeholder="Last name" style="{{ inputStyle }}" />
+            <input value="{{ form.email }}" onChange="{{ setField_email }}" placeholder="Email address" style="{{ inputStyleFull }}" />
+            <input value="{{ form.phone }}" onChange="{{ setField_phone }}" placeholder="Phone number" style="{{ inputStyleFull }}" />
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:20px">
+          <div style="font-size:22px; font-weight:700; color:rgb(47,47,47)">Shipping Address</div>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+            <input value="{{ form.address }}" onChange="{{ setField_address }}" placeholder="Street address" style="{{ inputStyleFull }}" />
+            <input value="{{ form.city }}" onChange="{{ setField_city }}" placeholder="City" style="{{ inputStyle }}" />
+            <input value="{{ form.state }}" onChange="{{ setField_state }}" placeholder="State / Province" style="{{ inputStyle }}" />
+            <input value="{{ form.zip }}" onChange="{{ setField_zip }}" placeholder="ZIP / Postal code" style="{{ inputStyle }}" />
+            <input value="{{ form.country }}" onChange="{{ setField_country }}" placeholder="Country" style="{{ inputStyle }}" />
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:20px">
+          <div style="font-size:22px; font-weight:700; color:rgb(47,47,47)">Delivery Method</div>
+          <div style="display:flex; flex-direction:column; gap:14px">
+            <sc-for list="{{ deliveryOptions }}" as="opt" hint-placeholder-count="3">
+              <div style="{{ opt.rowStyle }}" onClick="{{ opt.onClick }}">
+                <div style="{{ opt.radioStyle }}"></div>
+                <div style="flex:1; min-width:0">
+                  <div style="font-size:15px; font-weight:700; color:rgb(47,47,47)">{{ opt.label }}</div>
+                  <div style="font-size:13px; font-weight:400; color:rgb(115,115,115)">{{ opt.eta }}</div>
+                </div>
+                <div style="font-size:15px; font-weight:700; color:rgb(37,43,66); flex-shrink:0">{{ opt.priceLabel }}</div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:20px">
+          <div style="font-size:22px; font-weight:700; color:rgb(47,47,47)">Payment Method</div>
+          <div style="display:flex; flex-direction:column; gap:14px">
+            <sc-for list="{{ paymentOptions }}" as="opt" hint-placeholder-count="3">
+              <div style="{{ opt.rowStyle }}" onClick="{{ opt.onClick }}">
+                <div style="{{ opt.radioStyle }}"></div>
+                <div style="font-size:15px; font-weight:700; color:rgb(47,47,47); flex:1">{{ opt.label }}</div>
+              </div>
+            </sc-for>
+          </div>
+          <sc-if value="{{ isCardPayment }}" hint-placeholder-val="{{ true }}">
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px; margin-top:8px">
+            <input value="{{ form.cardNumber }}" onChange="{{ setField_cardNumber }}" placeholder="Card number" style="{{ inputStyleFull }}" />
+            <input value="{{ form.cardExpiry }}" onChange="{{ setField_cardExpiry }}" placeholder="MM / YY" style="{{ inputStyle }}" />
+            <input value="{{ form.cardCvc }}" onChange="{{ setField_cardCvc }}" placeholder="CVC" style="{{ inputStyle }}" />
+          </div>
+          </sc-if>
+        </div>
+
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:24px; height:fit-content; padding:32px; border-radius:20px; background:rgb(248,248,248)">
+        <div style="font-size:20px; font-weight:700; color:rgb(47,47,47)">Order Summary</div>
+
+        <div style="display:flex; flex-direction:column; gap:16px">
+          <sc-for list="{{ items }}" as="item" hint-placeholder-count="3">
+            <div style="display:flex; gap:14px; align-items:center">
+              <div style="width:56px; height:56px; border-radius:10px; overflow:hidden; background:url(./assets/product.jpg) center / cover no-repeat; flex-shrink:0"></div>
+              <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:4px">
+                <span style="font-size:14px; font-weight:700; color:rgb(37,43,66)">{{ item.title }}</span>
+                <span style="font-size:12px; font-weight:400; color:rgb(115,115,115)">Qty {{ item.qty }}</span>
+              </div>
+              <span style="font-size:14px; font-weight:700; color:rgb(37,43,66); flex-shrink:0">{{ item.lineTotal }}</span>
+            </div>
+          </sc-for>
+        </div>
+
+        <div style="height:1px; background:rgb(222,222,222)"></div>
+
+        <div style="display:flex; flex-direction:column; gap:14px">
+          <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:500; color:rgb(55,55,55)">
+            <span>Subtotal</span>
+            <span>{{ subtotalLabel }}</span>
+          </div>
+          <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:500; color:rgb(55,55,55)">
+            <span>Delivery</span>
+            <span>{{ deliveryLabel }}</span>
+          </div>
+        </div>
+
+        <div style="height:1px; background:rgb(222,222,222)"></div>
+
+        <div style="display:flex; justify-content:space-between; font-size:20px; font-weight:700; color:rgb(37,43,66)">
+          <span>Total</span>
+          <span>{{ totalLabel }}</span>
+        </div>
+
+        <div style="height:53px; border-radius:20px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center; margin-top:8px; cursor:pointer" onClick="{{ placeOrder }}" style-hover="background:rgb(255,172,51)">
+          <span style="font-size:18px; font-weight:700; color:rgb(54,54,54)">Place Order</span>
+        </div>
+
+        <sc-if value="{{ orderPlaced }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:13px; font-weight:700; color:rgb(84,163,73); text-align:center">Order placed! Confirmation sent to {{ form.email }}</div>
+        </sc-if>
+
+        <div style="display:flex; align-items:center; gap:10px; justify-content:center">
+          <img src="./assets/icon-return.svg" alt="" style="width:16px; height:16px" />
+          <span style="font-size:12px; font-weight:500; color:rgb(115,115,115)">30-day money back guarantee</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="background:rgb(26,26,26); display:flex; justify-content:center; padding:72px 24px">
+    <div style="width:100%; max-width:1592px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap">
+      <span style="font-size:16px; font-weight:700; line-height:100%; color:rgb(255,255,255)">Frozen — Trendy &amp; Stylish Outfits for Kids</span>
+      <span style="font-size:16px; font-weight:400; line-height:100%; color:rgb(178,178,178)">© 2026 Frozen. All rights reserved.</span>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const CART_ITEMS = [
+  { title: "Kids Cotton Hoodie", price: 38, qty: 1 },
+  { title: "Ruffle Party Dress", price: 36, qty: 2 },
+  { title: "Padded Winter Coat", price: 78, qty: 1 },
+];
+
+const DELIVERY_OPTIONS = [
+  { id: "standard", label: "Standard Delivery", eta: "5-7 business days", price: 6.99 },
+  { id: "express", label: "Express Delivery", eta: "2-3 business days", price: 14.99 },
+  { id: "overnight", label: "Overnight Delivery", eta: "Next business day", price: 29.99 },
+];
+
+const PAYMENT_OPTIONS = [
+  { id: "card", label: "Credit / Debit Card" },
+  { id: "paypal", label: "PayPal" },
+  { id: "cod", label: "Cash on Delivery" },
+];
+
+const INPUT_STYLE = "height:48px; padding:0 16px; border-radius:12px; border:2px solid rgb(230,230,230); background:rgb(255,255,255); font-family:Inter, sans-serif; font-size:14px; color:rgb(47,47,47); box-sizing:border-box; outline:none";
+
+class Component extends DCLogic {
+  state = {
+    form: {
+      firstName: "", lastName: "", email: "", phone: "",
+      address: "", city: "", state: "", zip: "", country: "",
+      cardNumber: "", cardExpiry: "", cardCvc: "",
+    },
+    delivery: "standard",
+    payment: "card",
+    orderPlaced: false,
+  };
+
+  setField(name, value) {
+    this.setState(s => ({ form: { ...s.form, [name]: value } }));
+  }
+
+  renderVals() {
+    const subtotal = CART_ITEMS.reduce((sum, i) => sum + i.price * i.qty, 0);
+    const delivery = DELIVERY_OPTIONS.find(d => d.id === this.state.delivery);
+    const total = subtotal + delivery.price;
+
+    const fieldSetters = {};
+    ["firstName", "lastName", "email", "phone", "address", "city", "state", "zip", "country", "cardNumber", "cardExpiry", "cardCvc"].forEach(name => {
+      fieldSetters[`setField_${name}`] = (e) => this.setField(name, e.target.value);
+    });
+
+    const deliveryOptions = DELIVERY_OPTIONS.map(opt => {
+      const active = opt.id === this.state.delivery;
+      return {
+        label: opt.label,
+        eta: opt.eta,
+        priceLabel: `$${opt.price.toFixed(2)}`,
+        rowStyle: `display:flex; align-items:center; gap:16px; padding:18px 20px; border-radius:14px; cursor:pointer; box-sizing:border-box; border:2px solid ${active ? "rgb(255,207,64)" : "rgb(230,230,230)"}; background:${active ? "rgba(255,207,64,0.08)" : "rgb(255,255,255)"}`,
+        radioStyle: `width:20px; height:20px; border-radius:50%; flex-shrink:0; border:2px solid ${active ? "rgb(26,26,26)" : "rgb(200,200,200)"}; background:${active ? "radial-gradient(circle, rgb(26,26,26) 40%, transparent 44%)" : "transparent"}`,
+        onClick: () => this.setState({ delivery: opt.id }),
+      };
+    });
+
+    const paymentOptions = PAYMENT_OPTIONS.map(opt => {
+      const active = opt.id === this.state.payment;
+      return {
+        label: opt.label,
+        rowStyle: `display:flex; align-items:center; gap:16px; padding:18px 20px; border-radius:14px; cursor:pointer; box-sizing:border-box; border:2px solid ${active ? "rgb(255,207,64)" : "rgb(230,230,230)"}; background:${active ? "rgba(255,207,64,0.08)" : "rgb(255,255,255)"}`,
+        radioStyle: `width:20px; height:20px; border-radius:50%; flex-shrink:0; border:2px solid ${active ? "rgb(26,26,26)" : "rgb(200,200,200)"}; background:${active ? "radial-gradient(circle, rgb(26,26,26) 40%, transparent 44%)" : "transparent"}`,
+        onClick: () => this.setState({ payment: opt.id }),
+      };
+    });
+
+    const items = CART_ITEMS.map(i => ({
+      title: i.title,
+      qty: i.qty,
+      lineTotal: `$${(i.price * i.qty).toFixed(2)}`,
+    }));
+
+    return {
+      form: this.state.form,
+      ...fieldSetters,
+      inputStyle: INPUT_STYLE,
+      inputStyleFull: `${INPUT_STYLE}; grid-column:1 / -1`,
+      deliveryOptions,
+      paymentOptions,
+      isCardPayment: this.state.payment === "card",
+      items,
+      subtotalLabel: `$${subtotal.toFixed(2)}`,
+      deliveryLabel: `$${delivery.price.toFixed(2)}`,
+      totalLabel: `$${total.toFixed(2)}`,
+      placeOrder: () => this.setState({ orderPlaced: true }),
+      orderPlaced: this.state.orderPlaced,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

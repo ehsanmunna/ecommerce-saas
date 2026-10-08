@@ -12,7 +12,13 @@ export class TenantSummaryResponseDto {
 
   @ApiProperty({
     example: 'ACTIVE',
-    enum: ['PROVISIONING', 'ACTIVE', 'PROVISIONING_FAILED', 'SUSPENDED'],
+    enum: [
+      'PENDING_VERIFICATION',
+      'PROVISIONING',
+      'ACTIVE',
+      'PROVISIONING_FAILED',
+      'SUSPENDED',
+    ],
   })
   status!: string;
 }

@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: rgb(255,255,255); -webkit-font-smoothing: antialiased; }
+  a { color: rgb(37,43,66); text-decoration: none; }
+  a:hover { color: rgb(229,160,0); }
+  ::placeholder { color: rgb(164,164,164); }
+</style>
+</helmet>
+<div style="width:100%; background:rgb(255,255,255); font-family:Inter, Helvetica, Arial, sans-serif; color:rgb(47,47,47); overflow-x:hidden">
+
+  <div style="height:50px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center">
+    <div style="width:100%; max-width:1592px; padding:0 24px; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap">
+      <div style="display:flex; align-items:center; gap:8px">
+        <img src="./assets/icon-truck.svg" alt="" style="width:15px; height:11px" />
+        <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Free Shipping on Orders Over $99</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:26px">
+        <div style="display:flex; align-items:center; gap:8px">
+          <img src="./assets/icon-return.svg" alt="" style="width:16px; height:16px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">30 Days easy return</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px">
+          <img src="./assets/icon-help.svg" alt="" style="width:16px; height:17px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Help Center</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:59px 0 39px">
+    <div style="width:100%; max-width:1592px; padding:0 24px; box-sizing:border-box; display:flex; align-items:center; gap:48px; flex-wrap:wrap">
+      <img src="./assets/logo.png" alt="Frozen" style="width:292px; height:63px; object-fit:contain; flex-shrink:0" />
+      <div style="flex:1; min-width:280px; display:flex; align-items:center; height:49px; background:rgb(240,240,240)">
+        <div style="width:49px; height:49px; display:flex; align-items:center; justify-content:center; flex-shrink:0">
+          <div style="width:18px; height:2px; background:rgb(26,26,26); box-shadow:0 6px 0 rgb(26,26,26), 0 -6px 0 rgb(26,26,26)"></div>
+        </div>
+        <span style="flex:1; font-size:12px; font-weight:700; line-height:100%; color:rgb(164,164,164)">Search you product</span>
+        <img src="./assets/icon-search.svg" alt="" style="width:28px; height:28px; margin-right:9px; flex-shrink:0" />
+      </div>
+      <div style="display:flex; align-items:center; gap:51px; flex-shrink:0">
+        <div style="display:flex; align-items:center; gap:8px">
+          <img src="./assets/icon-heart.svg" alt="" style="width:27px; height:25px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Wish-list</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:4px">
+          <img src="./assets/icon-cart.svg" alt="" style="width:27px; height:27px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Cart</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:0 24px 100px; box-sizing:border-box">
+    <div style="width:100%; max-width:1592px; display:grid; grid-template-columns:260px minmax(0,1fr); gap:48px">
+
+      <div style="display:flex; flex-direction:column; gap:32px; min-width:0">
+        <div style="display:flex; align-items:center; gap:16px">
+          <div style="width:56px; height:56px; border-radius:50%; background:url(./assets/avatar.jpg) center / cover no-repeat; flex-shrink:0"></div>
+          <div style="display:flex; flex-direction:column; gap:2px; min-width:0">
+            <span style="font-size:16px; font-weight:700; color:rgb(47,47,47)">{{ user.name }}</span>
+            <span style="font-size:13px; font-weight:400; color:rgb(115,115,115)">{{ user.email }}</span>
+          </div>
+        </div>
+
+        <div style="display:flex; flex-direction:column; gap:6px">
+          <sc-for list="{{ navItems }}" as="nav" hint-placeholder-count="3">
+            <div style="{{ nav.style }}" onClick="{{ nav.onClick }}">{{ nav.label }}</div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div style="display:flex; flex-direction:column; min-width:0">
+
+        <sc-if value="{{ isProfile }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex; flex-direction:column; gap:24px; max-width:640px">
+          <span style="font-size:28px; font-weight:700; color:rgb(47,47,47)">Profile</span>
+          <div style="display:grid; grid-template-columns:1fr 1fr; gap:16px">
+            <input value="{{ profile.firstName }}" onChange="{{ setProfile_firstName }}" placeholder="First name" style="{{ inputStyle }}" />
+            <input value="{{ profile.lastName }}" onChange="{{ setProfile_lastName }}" placeholder="Last name" style="{{ inputStyle }}" />
+            <input value="{{ profile.email }}" onChange="{{ setProfile_email }}" placeholder="Email address" style="{{ inputStyleFull }}" />
+            <input value="{{ profile.phone }}" onChange="{{ setProfile_phone }}" placeholder="Phone number" style="{{ inputStyleFull }}" />
+          </div>
+          <div style="width:fit-content; height:51px; padding:0 32px; border-radius:20px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center; cursor:pointer" onClick="{{ saveProfile }}" style-hover="background:rgb(255,172,51)">
+            <span style="font-size:16px; font-weight:700; color:rgb(54,54,54)">Save Changes</span>
+          </div>
+          <sc-if value="{{ profileSaved }}" hint-placeholder-val="{{ false }}">
+          <span style="font-size:13px; font-weight:700; color:rgb(84,163,73)">Profile updated</span>
+          </sc-if>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ isAddresses }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:24px">
+          <div style="display:flex; align-items:center; justify-content:space-between">
+            <span style="font-size:28px; font-weight:700; color:rgb(47,47,47)">Addresses</span>
+            <div style="height:44px; padding:0 20px; border-radius:14px; border:2px solid rgb(26,26,26); display:flex; align-items:center; justify-content:center; cursor:pointer" style-hover="background:rgb(255,207,64); border-color:rgb(255,207,64)">
+              <span style="font-size:14px; font-weight:700; color:rgb(26,26,26)">+ Add New Address</span>
+            </div>
+          </div>
+          <div style="display:grid; grid-template-columns:repeat(auto-fill, minmax(280px, 1fr)); gap:24px">
+            <sc-for list="{{ addresses }}" as="addr" hint-placeholder-count="2">
+              <div style="position:relative; display:flex; flex-direction:column; gap:10px; padding:24px; border-radius:16px; border:2px solid {{ addr.borderColor }}; background:rgb(255,255,255)">
+                <sc-if value="{{ addr.isDefault }}" hint-placeholder-val="{{ false }}">
+                <div style="position:absolute; right:20px; top:20px; font-size:11px; font-weight:700; color:rgb(38,79,20); background:rgb(198,246,140); padding:4px 10px; border-radius:10px">Default</div>
+                </sc-if>
+                <span style="font-size:15px; font-weight:700; color:rgb(37,43,66)">{{ addr.label }}</span>
+                <span style="font-size:14px; font-weight:400; color:rgb(55,55,55)">{{ addr.name }}</span>
+                <span style="font-size:14px; font-weight:400; color:rgb(55,55,55)">{{ addr.line1 }}</span>
+                <span style="font-size:14px; font-weight:400; color:rgb(55,55,55)">{{ addr.line2 }}</span>
+                <div style="display:flex; gap:16px; margin-top:8px">
+                  <span style="font-size:13px; font-weight:700; color:rgb(37,43,66); cursor:pointer">Edit</span>
+                  <span style="font-size:13px; font-weight:700; color:rgb(229,160,0); cursor:pointer" onClick="{{ addr.remove }}">Remove</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+        <sc-if value="{{ isOrders }}" hint-placeholder-val="{{ false }}">
+        <div style="display:flex; flex-direction:column; gap:24px">
+          <span style="font-size:28px; font-weight:700; color:rgb(47,47,47)">Orders</span>
+          <div style="display:flex; flex-direction:column; gap:16px">
+            <sc-for list="{{ orders }}" as="order" hint-placeholder-count="3">
+              <div style="display:flex; flex-direction:column; gap:16px; padding:24px; border-radius:16px; border:2px solid rgb(230,230,230)">
+                <div style="display:flex; align-items:center; justify-content:space-between; gap:16px; flex-wrap:wrap">
+                  <div style="display:flex; flex-direction:column; gap:4px">
+                    <span style="font-size:15px; font-weight:700; color:rgb(37,43,66)">{{ order.number }}</span>
+                    <span style="font-size:13px; font-weight:400; color:rgb(115,115,115)">Placed on {{ order.date }}</span>
+                  </div>
+                  <div style="display:flex; align-items:center; gap:16px">
+                    <div style="padding:6px 14px; border-radius:12px; background:{{ order.statusBg }}">
+                      <span style="font-size:12px; font-weight:700; color:{{ order.statusColor }}">{{ order.status }}</span>
+                    </div>
+                    <span style="font-size:15px; font-weight:700; color:rgb(37,43,66)">{{ order.total }}</span>
+                  </div>
+                </div>
+                <div style="height:1px; background:rgb(230,230,230)"></div>
+                <div style="display:flex; align-items:center; gap:16px; flex-wrap:wrap">
+                  <span style="font-size:13px; font-weight:400; color:rgb(55,55,55)">{{ order.itemsSummary }}</span>
+                  <div style="flex:1"></div>
+                  <a href="./Frozen Order Confirmation.dc.html" style="font-size:13px; font-weight:700; color:rgb(37,43,66)">View Details</a>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+        </sc-if>
+
+      </div>
+    </div>
+  </div>
+
+  <div style="background:rgb(26,26,26); display:flex; justify-content:center; padding:72px 24px">
+    <div style="width:100%; max-width:1592px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap">
+      <span style="font-size:16px; font-weight:700; line-height:100%; color:rgb(255,255,255)">Frozen — Trendy &amp; Stylish Outfits for Kids</span>
+      <span style="font-size:16px; font-weight:400; line-height:100%; color:rgb(178,178,178)">© 2026 Frozen. All rights reserved.</span>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const INPUT_STYLE = "height:48px; padding:0 16px; border-radius:12px; border:2px solid rgb(230,230,230); background:rgb(255,255,255); font-family:Inter, sans-serif; font-size:14px; color:rgb(47,47,47); box-sizing:border-box; outline:none";
+
+const NAV_TABS = [
+  { id: "profile", label: "Profile" },
+  { id: "addresses", label: "Addresses" },
+  { id: "orders", label: "Orders" },
+];
+
+const ORDERS = [
+  { number: "#FZ-284917", date: "September 8, 2026", status: "Delivered", statusBg: "rgb(198,246,140)", statusColor: "rgb(38,79,20)", total: "$120.98", itemsSummary: "Kids Cotton Hoodie, Ruffle Party Dress +1 more" },
+  { number: "#FZ-284102", date: "August 22, 2026", status: "In Transit", statusBg: "rgb(255,236,179)", statusColor: "rgb(133,94,7)", total: "$52.00", itemsSummary: "Denim Overall Set" },
+  { number: "#FZ-283551", date: "July 30, 2026", status: "Cancelled", statusBg: "rgb(255,220,220)", statusColor: "rgb(153,40,40)", total: "$29.00", itemsSummary: "Sport Jogger Pants" },
+];
+
+class Component extends DCLogic {
+  state = {
+    tab: "profile",
+    profile: { firstName: "Elsa", lastName: "Winters", email: "elsa@arendelle.com", phone: "+1 555 0142" },
+    profileSaved: false,
+    addresses: [
+      { id: 1, label: "Home", name: "Elsa Winters", line1: "148 Snowflake Avenue, Apt 3B", line2: "Arendelle, CA 90210, United States", isDefault: true },
+      { id: 2, label: "Work", name: "Elsa Winters", line1: "22 Ice Palace Road", line2: "Arendelle, CA 90211, United States", isDefault: false },
+    ],
+  };
+
+  setProfileField(name, value) {
+    this.setState(s => ({ profile: { ...s.profile, [name]: value }, profileSaved: false }));
+  }
+
+  removeAddress(id) {
+    this.setState(s => ({ addresses: s.addresses.filter(a => a.id !== id) }));
+  }
+
+  renderVals() {
+    const navItems = NAV_TABS.map(t => {
+      const active = t.id === this.state.tab;
+      return {
+        label: t.label,
+        style: `padding:14px 16px; border-radius:12px; font-size:15px; font-weight:700; cursor:pointer; ${active ? "background:rgb(26,26,26); color:rgb(255,255,255)" : "background:transparent; color:rgb(55,55,55)"}`,
+        onClick: () => this.setState({ tab: t.id }),
+      };
+    });
+
+    const fieldSetters = {};
+    ["firstName", "lastName", "email", "phone"].forEach(name => {
+      fieldSetters[`setProfile_${name}`] = (e) => this.setProfileField(name, e.target.value);
+    });
+
+    const addresses = this.state.addresses.map(a => ({
+      ...a,
+      borderColor: a.isDefault ? "rgb(255,207,64)" : "rgb(230,230,230)",
+      remove: () => this.removeAddress(a.id),
+    }));
+
+    return {
+      user: { name: `${this.state.profile.firstName} ${this.state.profile.lastName}`, email: this.state.profile.email },
+      navItems,
+      isProfile: this.state.tab === "profile",
+      isAddresses: this.state.tab === "addresses",
+      isOrders: this.state.tab === "orders",
+      profile: this.state.profile,
+      ...fieldSetters,
+      inputStyle: INPUT_STYLE,
+      inputStyleFull: `${INPUT_STYLE}; grid-column:1 / -1`,
+      saveProfile: () => this.setState({ profileSaved: true }),
+      profileSaved: this.state.profileSaved,
+      addresses,
+      orders: ORDERS,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

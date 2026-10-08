@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: rgb(255,255,255); -webkit-font-smoothing: antialiased; }
+  a { color: rgb(37,43,66); text-decoration: none; }
+  a:hover { color: rgb(229,160,0); }
+</style>
+</helmet>
+<div style="width:100%; background:rgb(255,255,255); font-family:Inter, Helvetica, Arial, sans-serif; color:rgb(47,47,47); overflow-x:hidden">
+
+  <sc-if value="{{ showTopBar }}" hint-placeholder-val="{{ true }}">
+  <div style="height:50px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center">
+    <div style="width:100%; max-width:1592px; padding:0 24px; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap">
+      <div style="display:flex; align-items:center; gap:8px">
+        <img src="./assets/icon-truck.svg" alt="" style="width:15px; height:11px" />
+        <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Free Shipping on Orders Over $99</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:26px">
+        <div style="display:flex; align-items:center; gap:8px">
+          <img src="./assets/icon-return.svg" alt="" style="width:16px; height:16px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">30 Days easy return</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px">
+          <img src="./assets/icon-help.svg" alt="" style="width:16px; height:17px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Help Center</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <div style="display:flex; justify-content:center; padding:59px 0 39px">
+    <div style="width:100%; max-width:1592px; padding:0 24px; box-sizing:border-box; display:flex; align-items:center; gap:48px; flex-wrap:wrap">
+      <img src="./assets/logo.png" alt="Frozen" style="width:292px; height:63px; object-fit:contain; flex-shrink:0" />
+      <div style="flex:1; min-width:280px; display:flex; align-items:center; height:49px; background:rgb(240,240,240)">
+        <div style="width:49px; height:49px; display:flex; align-items:center; justify-content:center; flex-shrink:0">
+          <div style="width:18px; height:2px; background:rgb(26,26,26); box-shadow:0 6px 0 rgb(26,26,26), 0 -6px 0 rgb(26,26,26)"></div>
+        </div>
+        <span style="flex:1; font-size:12px; font-weight:700; line-height:100%; color:rgb(164,164,164)">Search you product</span>
+        <img src="./assets/icon-search.svg" alt="" style="width:28px; height:28px; margin-right:9px; flex-shrink:0" />
+      </div>
+      <div style="display:flex; align-items:center; gap:51px; flex-shrink:0">
+        <div style="display:flex; align-items:center; gap:7px">
+          <img src="./assets/icon-user.svg" alt="" style="width:27px; height:27px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Sign-in | Sign-up</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px">
+          <img src="./assets/icon-heart.svg" alt="" style="width:27px; height:25px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Wish-list</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:4px">
+          <img src="./assets/icon-cart.svg" alt="" style="width:27px; height:27px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Cart</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:0 24px 98px; box-sizing:border-box">
+    <div style="position:relative; width:100%; max-width:1592px; aspect-ratio:1592 / 745; background:url(./assets/banner.jpg) center / cover no-repeat">
+      <div style="position:absolute; left:0; right:0; bottom:98px; display:flex; align-items:center; justify-content:center; gap:6px">
+        <div style="width:42px; height:14px; border-radius:7px; background:rgb(255,255,255)"></div>
+        <div style="width:14px; height:14px; border-radius:7px; background:rgba(255,255,255,0.55)"></div>
+        <div style="width:14px; height:14px; border-radius:7px; background:rgba(255,255,255,0.55)"></div>
+        <div style="width:14px; height:14px; border-radius:7px; background:rgba(255,255,255,0.55)"></div>
+      </div>
+      <div style="position:absolute; left:24px; top:50%; transform:translateY(-50%); width:49px; height:53px; display:flex; align-items:center; justify-content:center">
+        <img src="./assets/icon-arrow-left.svg" alt="Previous" style="width:49px; height:53px" />
+      </div>
+      <div style="position:absolute; right:24px; top:50%; transform:translateY(-50%); width:48px; height:53px; display:flex; align-items:center; justify-content:center">
+        <img src="./assets/icon-arrow-right.svg" alt="Next" style="width:48px; height:53px" />
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:0 24px 136px; box-sizing:border-box">
+    <div style="width:100%; max-width:1586px; display:grid; grid-template-columns:repeat(auto-fit, minmax(380px, 1fr)); gap:79px 79.5px">
+
+      <div style="position:relative; height:414.523px; border-radius:20px; overflow:hidden; background:rgb(198,246,140)">
+        <div style="position:absolute; left:7.209px; top:-20.726px; width:244.115px; height:704.957px; background:url(./assets/girl-camera.png) center / cover no-repeat"></div>
+        <div style="position:absolute; left:246.911px; top:134.269px; display:flex; flex-direction:column; gap:33px; align-items:flex-start">
+          <div style="font-size:48px; font-weight:700; line-height:100%; color:rgb(47,47,47)">Girls<br />Clothing</div>
+          <div style="font-size:20px; font-weight:700; line-height:100%; color:rgb(38,38,38)">Trendy &amp; Stylish Outfits</div>
+          <div style="width:163.106px; height:51.365px; border-radius:20px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center" style-hover="background:rgb(255,172,51)">
+            <span style="font-size:24px; font-weight:700; line-height:100%; color:rgb(54,54,54)">Shop Now</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="position:relative; height:414.523px; border-radius:20px; overflow:hidden; background:rgb(150,202,255)">
+        <div style="position:absolute; left:-13.517px; top:-9.011px; width:287.413px; height:609.273px; background:url(./assets/boys.png) center / cover no-repeat"></div>
+        <div style="position:absolute; left:246.911px; top:134.269px; display:flex; flex-direction:column; gap:33px; align-items:flex-start">
+          <div style="font-size:48px; font-weight:700; line-height:100%; color:rgb(47,47,47)">Boys<br />Clothing</div>
+          <div style="font-size:20px; font-weight:700; line-height:100%; color:rgb(38,38,38)">Trendy &amp; Stylish Outfits</div>
+          <div style="width:163.106px; height:51.365px; border-radius:20px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center" style-hover="background:rgb(255,172,51)">
+            <span style="font-size:24px; font-weight:700; line-height:100%; color:rgb(54,54,54)">Shop Now</span>
+          </div>
+        </div>
+      </div>
+
+      <div style="position:relative; height:414.523px; border-radius:20px; overflow:hidden; background:rgb(207,255,150)">
+        <div style="position:absolute; left:0; top:15.5px; width:238.004px; height:414.342px; background:url(./assets/baby.png) center / cover no-repeat"></div>
+        <div style="position:absolute; left:246.911px; top:134.269px; display:flex; flex-direction:column; gap:33px; align-items:flex-start">
+          <div style="font-size:48px; font-weight:700; line-height:100%; color:rgb(47,47,47)">Baby<br />Clothing</div>
+          <div style="font-size:20px; font-weight:700; line-height:100%; color:rgb(38,38,38)">Trendy &amp; Stylish Outfits</div>
+          <div style="width:163.106px; height:51.365px; border-radius:20px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center" style-hover="background:rgb(255,172,51)">
+            <span style="font-size:24px; font-weight:700; line-height:100%; color:rgb(54,54,54)">Shop Now</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <div style="display:flex; flex-direction:column; align-items:center; padding:0 24px 120px; box-sizing:border-box">
+    <div style="font-size:48px; font-weight:700; line-height:100%; text-align:center; color:rgb(47,47,47); margin-bottom:63px">New Collections</div>
+    <div style="width:100%; max-width:1650px; display:grid; grid-template-columns:repeat(auto-fill, minmax(300px, 1fr)); gap:50px">
+      <sc-for list="{{ products }}" as="p" hint-placeholder-count="8">
+        <div style="border-radius:25px; background:rgb(255,255,255); box-shadow:0px 4px 10px 0px rgba(0,0,0,0.1); padding:24px; box-sizing:border-box; display:flex; flex-direction:column; gap:29px; align-items:stretch" style-hover="box-shadow:0px 10px 24px 0px rgba(0,0,0,0.14)">
+          <div style="position:relative; height:242px; border-radius:10px; overflow:hidden; background:rgb(205,254,251)">
+            <div style="position:absolute; inset:0; background:url(./assets/product.jpg) center / cover no-repeat"></div>
+            <div style="position:absolute; right:16px; top:16px; width:32px; height:32px; border-radius:16px; background:rgba(255,255,255,0.9); display:flex; align-items:center; justify-content:center">
+              <img src="./assets/icon-heart.svg" alt="Add to wish-list" style="width:20px; height:18px" />
+            </div>
+          </div>
+          <div style="display:flex; flex-direction:row; justify-content:space-between; align-items:flex-start; gap:16px">
+            <div style="display:flex; flex-direction:column; gap:9px; align-items:flex-start; min-width:0">
+              <div style="font-size:16px; font-weight:700; line-height:130%; color:rgb(37,43,66)">{{ p.title }}</div>
+              <div style="font-size:16px; font-weight:400; line-height:100%; color:rgb(115,115,115)">{{ p.brand }}</div>
+              <div style="font-size:16px; font-weight:700; line-height:100%; color:rgb(37,43,66)">{{ p.price }}</div>
+            </div>
+            <div style="width:40px; height:39px; border-radius:25px; background:rgb(26,26,26); box-shadow:0px 1px 10px 0px rgba(0,0,0,0.1); display:flex; align-items:center; justify-content:center; flex-shrink:0" style-hover="background:rgb(55,55,55)">
+              <span style="font-family:Montserrat, Helvetica, Arial, sans-serif; font-weight:500; font-size:28px; line-height:20px; letter-spacing:0.2px; color:rgb(255,255,255); margin-top:-3px">+</span>
+            </div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div style="margin-top:64px; height:51.365px; padding:0 40px; border-radius:20px; border:2px solid rgb(26,26,26); display:flex; align-items:center; justify-content:center" style-hover="background:rgb(255,207,64); border-color:rgb(255,207,64)">
+      <span style="font-size:20px; font-weight:700; line-height:100%; color:rgb(26,26,26)">View all products</span>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:0 24px 130px; box-sizing:border-box">
+    <div style="width:100%; max-width:1650px; display:grid; grid-template-columns:repeat(auto-fit, minmax(300px, 1fr)); gap:48px">
+      <div style="display:flex; align-items:center; gap:24px">
+        <img src="./assets/icon-service-1.svg" alt="" style="width:89px; height:64px; flex-shrink:0" />
+        <div>
+          <div style="font-size:16px; font-weight:700; line-height:100%; color:rgb(55,55,55); margin-bottom:15px">Free Shipping</div>
+          <div style="font-size:16px; font-weight:400; line-height:100%; color:rgb(55,55,55)">On order over $99</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:24px">
+        <img src="./assets/icon-service-2.svg" alt="" style="width:74px; height:68px; flex-shrink:0" />
+        <div>
+          <div style="font-size:16px; font-weight:700; line-height:100%; color:rgb(55,55,55); margin-bottom:15px">Secure Payment</div>
+          <div style="font-size:16px; font-weight:400; line-height:100%; color:rgb(55,55,55)">100% secure payment</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:24px">
+        <img src="./assets/icon-return.svg" alt="" style="width:48px; height:48px; flex-shrink:0" />
+        <div>
+          <div style="font-size:16px; font-weight:700; line-height:100%; color:rgb(55,55,55); margin-bottom:15px">Easy Return</div>
+          <div style="font-size:16px; font-weight:400; line-height:100%; color:rgb(55,55,55)">Money Back Guarantee</div>
+        </div>
+      </div>
+      <div style="display:flex; align-items:center; gap:24px">
+        <img src="./assets/icon-help.svg" alt="" style="width:44px; height:48px; flex-shrink:0" />
+        <div>
+          <div style="font-size:16px; font-weight:700; line-height:100%; color:rgb(55,55,55); margin-bottom:15px">Free Shipping</div>
+          <div style="font-size:16px; font-weight:400; line-height:100%; color:rgb(55,55,55)">We’re are to help</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-direction:column; align-items:center; padding:0 24px 140px; box-sizing:border-box">
+    <div style="font-size:48px; font-weight:700; line-height:100%; text-align:center; color:rgb(47,47,47); margin-bottom:63px">Happy Customers</div>
+    <div style="width:100%; max-width:1592px; display:grid; grid-template-columns:repeat(auto-fit, minmax(420px, 1fr)); gap:45px">
+      <sc-for list="{{ reviews }}" as="r" hint-placeholder-count="2">
+        <div style="position:relative; min-height:270px; border-radius:47.647px; background:rgb(255,255,255); box-shadow:inset 0 0 0 1px rgb(200,200,200); padding:42.882px 52.412px; box-sizing:border-box; display:flex; gap:32px; align-items:flex-start">
+          <div style="width:69.882px; height:69.882px; border-radius:50%; flex-shrink:0; background:url(./assets/avatar.jpg) center / cover no-repeat"></div>
+          <div style="flex:1; min-width:0; display:flex; flex-direction:column; gap:14px">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; gap:24px">
+              <div>
+                <div style="font-family:Montserrat, Helvetica, Arial, sans-serif; font-size:17px; font-weight:700; line-height:130%; color:rgb(46,46,46)">{{ r.name }}</div>
+                <div style="font-family:Montserrat, Helvetica, Arial, sans-serif; font-size:14px; font-weight:400; line-height:130%; color:rgb(115,115,115)">{{ r.date }}</div>
+              </div>
+              <div style="display:flex; gap:5px; flex-shrink:0">
+                <div style="width:26.722px; height:25.564px; background:rgb(255,207,64); clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)"></div>
+                <div style="width:26.722px; height:25.564px; background:rgb(255,207,64); clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)"></div>
+                <div style="width:26.722px; height:25.564px; background:rgb(255,207,64); clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)"></div>
+                <div style="width:26.722px; height:25.564px; background:rgb(255,207,64); clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)"></div>
+                <div style="width:26.722px; height:25.564px; background:rgb(206,201,193); clip-path:polygon(50% 0%, 61% 35%, 98% 35%, 68% 57%, 79% 91%, 50% 70%, 21% 91%, 32% 57%, 2% 35%, 39% 35%)"></div>
+              </div>
+            </div>
+            <div style="font-family:Montserrat, Helvetica, Arial, sans-serif; font-size:14px; font-weight:400; line-height:165%; color:rgb(55,55,55); text-wrap:pretty">{{ r.body }}</div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+
+  <sc-if value="{{ showFooter }}" hint-placeholder-val="{{ true }}">
+  <div style="background:rgb(26,26,26); display:flex; justify-content:center; padding:72px 24px">
+    <div style="width:100%; max-width:1592px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap">
+      <span style="font-size:16px; font-weight:700; line-height:100%; color:rgb(255,255,255)">Frozen — Trendy &amp; Stylish Outfits for Kids</span>
+      <span style="font-size:16px; font-weight:400; line-height:100%; color:rgb(178,178,178)">© 2026 Frozen. All rights reserved.</span>
+    </div>
+  </div>
+  </sc-if>
+
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;showTopBar&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;productCount&quot;:{&quot;editor&quot;:&quot;int&quot;,&quot;default&quot;:8,&quot;min&quot;:4,&quot;max&quot;:8,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Layout&quot;},&quot;showFooter&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Layout&quot;}}">
+class Component extends DCLogic {
+  renderVals() {
+    const titles = [
+      "Kids Cotton Hoodie",
+      "Printed Summer Tee",
+      "Denim Overall Set",
+      "Soft Knit Cardigan",
+      "Ruffle Party Dress",
+      "Sport Jogger Pants",
+      "Striped Long Sleeve",
+      "Padded Winter Coat",
+    ];
+    const brands = ["NIKE", "PUMA", "ADIDAS", "ZARA KIDS", "H&M", "NIKE", "GAP", "UNIQLO"];
+    const prices = ["$38.00", "$24.00", "$52.00", "$44.00", "$36.00", "$29.00", "$21.00", "$78.00"];
+    const all = titles.map((title, i) => ({ title, brand: brands[i], price: prices[i] }));
+    return {
+      showTopBar: this.props.showTopBar ?? true,
+      showFooter: this.props.showFooter ?? true,
+      products: all.slice(0, this.props.productCount ?? 8),
+      reviews: [
+        {
+          name: "Elsa",
+          date: "15 September",
+          body: "Lorem Ipsum is simply dummy text of the printing and typesetting industry. The sizing runs true and the cotton held up after a dozen washes.",
+        },
+        {
+          name: "Anna",
+          date: "2 September",
+          body: "Ordered three outfits and every one arrived in two days. The return window made it easy to size up without any worry.",
+        },
+      ],
+    };
+  }
+}
+</script>
+</body>
+</html>

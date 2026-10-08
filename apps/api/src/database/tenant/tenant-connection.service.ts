@@ -27,7 +27,10 @@ export class TenantConnectionService implements OnModuleDestroy {
     return `postgresql://${user}:${password}@${info.host}:${info.port}/${info.databaseName}`;
   }
 
-  async getClient(tenantId: string, info: TenantConnectionInfo): Promise<TenantPrismaClient> {
+  async getClient(
+    tenantId: string,
+    info: TenantConnectionInfo,
+  ): Promise<TenantPrismaClient> {
     const cached = this.cache.get(tenantId);
     if (cached) {
       cached.lastUsedAt = Date.now();
@@ -63,13 +66,17 @@ export class TenantConnectionService implements OnModuleDestroy {
       }
     }
     if (oldestKey) {
-      this.logger.log(`Evicting cached tenant DB connection for tenant ${oldestKey}`);
+      this.logger.log(
+        `Evicting cached tenant DB connection for tenant ${oldestKey}`,
+      );
       await this.evict(oldestKey);
     }
   }
 
   async onModuleDestroy(): Promise<void> {
-    await Promise.all([...this.cache.values()].map((entry) => entry.client.$disconnect()));
+    await Promise.all(
+      [...this.cache.values()].map((entry) => entry.client.$disconnect()),
+    );
     this.cache.clear();
   }
 }

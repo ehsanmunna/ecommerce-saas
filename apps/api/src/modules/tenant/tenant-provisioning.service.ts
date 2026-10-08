@@ -25,10 +25,14 @@ export class TenantProvisioningService {
    * than ACTIVE - see design.md's provisioning-failure decision.
    */
   async provision(tenantId: string): Promise<void> {
-    const tenant = await this.platformPrisma.tenant.findUniqueOrThrow({ where: { id: tenantId } });
+    const tenant = await this.platformPrisma.tenant.findUniqueOrThrow({
+      where: { id: tenantId },
+    });
 
     if (!tenant.ownerEmail || !tenant.ownerPasswordHash) {
-      throw new BadRequestException('Tenant is missing owner credentials required for provisioning');
+      throw new BadRequestException(
+        'Tenant is missing owner credentials required for provisioning',
+      );
     }
 
     try {
@@ -46,7 +50,12 @@ export class TenantProvisioningService {
         port: tenant.databasePort,
         databaseName: tenant.databaseName,
       });
-      await this.seedDefaults(client, tenant.name, tenant.ownerEmail, tenant.ownerPasswordHash);
+      await this.seedDefaults(
+        client,
+        tenant.name,
+        tenant.ownerEmail,
+        tenant.ownerPasswordHash,
+      );
 
       await this.platformPrisma.tenant.update({
         where: { id: tenant.id },
@@ -54,14 +63,21 @@ export class TenantProvisioningService {
       });
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
-      this.logger.error(`Provisioning failed for tenant "${tenant.slug}": ${message}`);
+      this.logger.error(
+        `Provisioning failed for tenant "${tenant.slug}": ${message}`,
+      );
 
       await this.connections.evict(tenant.id);
       try {
         await this.dbAdmin.dropDatabaseIfExists(tenant.databaseName);
       } catch (cleanupError) {
-        const cleanupMessage = cleanupError instanceof Error ? cleanupError.message : String(cleanupError);
-        this.logger.error(`Cleanup of database "${tenant.databaseName}" failed: ${cleanupMessage}`);
+        const cleanupMessage =
+          cleanupError instanceof Error
+            ? cleanupError.message
+            : String(cleanupError);
+        this.logger.error(
+          `Cleanup of database "${tenant.databaseName}" failed: ${cleanupMessage}`,
+        );
       }
 
       await this.platformPrisma.tenant.update({
@@ -76,9 +92,13 @@ export class TenantProvisioningService {
    * first so retrying never leaves orphaned databases or duplicate tenants.
    */
   async retry(tenantId: string): Promise<void> {
-    const tenant = await this.platformPrisma.tenant.findUniqueOrThrow({ where: { id: tenantId } });
+    const tenant = await this.platformPrisma.tenant.findUniqueOrThrow({
+      where: { id: tenantId },
+    });
     if (tenant.status !== 'PROVISIONING_FAILED') {
-      throw new BadRequestException('Only tenants in PROVISIONING_FAILED status can be retried');
+      throw new BadRequestException(
+        'Only tenants in PROVISIONING_FAILED status can be retried',
+      );
     }
 
     await this.connections.evict(tenant.id);
@@ -97,7 +117,9 @@ export class TenantProvisioningService {
     ownerEmail: string,
     ownerPasswordHash: string,
   ): Promise<void> {
-    const roles = await Promise.all(DEFAULT_ROLES.map((name) => client.role.create({ data: { name } })));
+    const roles = await Promise.all(
+      DEFAULT_ROLES.map((name) => client.role.create({ data: { name } })),
+    );
     const ownerRole = roles.find((role) => role.name === 'OWNER');
     if (!ownerRole) {
       throw new Error('OWNER role was not created during seeding');
