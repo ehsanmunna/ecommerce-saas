@@ -7,6 +7,7 @@ import { BrowseProductsDto } from './dto/browse-products.dto';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CreateVariantDto } from './dto/create-variant.dto';
+import { ListProductsDto } from './dto/list-products.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -117,6 +118,46 @@ export class CatalogService {
     ]);
 
     return { items, total, page, pageSize };
+  }
+
+  // --- Staff listing ---
+
+  async listProducts(tenantDb: TenantPrismaClient, query: ListProductsDto) {
+    const page = query.page ?? 1;
+    const pageSize = query.pageSize ?? DEFAULT_PAGE_SIZE;
+
+    const where: Prisma.ProductWhereInput = {};
+    if (query.isActive === 'true') {
+      where.isActive = true;
+    } else if (query.isActive === 'false') {
+      where.isActive = false;
+    }
+    if (query.categorySlug) {
+      where.category = { slug: query.categorySlug };
+    }
+    if (query.search) {
+      where.name = { contains: query.search, mode: 'insensitive' };
+    }
+
+    const [items, total] = await Promise.all([
+      tenantDb.product.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: { category: true, variants: true },
+      }),
+      tenantDb.product.count({ where }),
+    ]);
+
+    return { items, total, page, pageSize };
+  }
+
+  listCategoriesWithCounts(tenantDb: TenantPrismaClient) {
+    return tenantDb.category.findMany({
+      orderBy: { name: 'asc' },
+      include: { _count: { select: { products: true } } },
+    });
   }
 
   listCategories(tenantDb: TenantPrismaClient) {

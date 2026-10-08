@@ -1,9 +1,11 @@
 import {
   Body,
   Controller,
+  Get,
   Param,
   Patch,
   Post,
+  Query,
   Req,
   UseGuards,
 } from '@nestjs/common';
@@ -15,6 +17,7 @@ import { CatalogService } from './catalog.service';
 import { CreateCategoryDto } from './dto/create-category.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CreateVariantDto } from './dto/create-variant.dto';
+import { ListProductsDto } from './dto/list-products.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
 /**
@@ -27,6 +30,16 @@ import { UpdateProductDto } from './dto/update-product.dto';
 @Roles('OWNER', 'ADMIN')
 export class CatalogAdminController {
   constructor(private readonly catalogService: CatalogService) {}
+
+  @Get('products')
+  listProducts(@Req() req: Request, @Query() query: ListProductsDto) {
+    return this.catalogService.listProducts(req.tenantDb!, query);
+  }
+
+  @Get('categories')
+  listCategories(@Req() req: Request) {
+    return this.catalogService.listCategoriesWithCounts(req.tenantDb!);
+  }
 
   @Post('categories')
   createCategory(@Req() req: Request, @Body() dto: CreateCategoryDto) {

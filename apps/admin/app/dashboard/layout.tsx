@@ -8,6 +8,7 @@ import { DashboardContext } from '../lib/dashboard-context';
 
 const NAV_ITEMS = [
   { href: '/dashboard/products', label: 'Products' },
+  { href: '/dashboard/categories', label: 'Categories' },
   { href: '/dashboard/orders', label: 'Orders' },
   { href: '/dashboard/customers', label: 'Customers' },
   { href: '/dashboard/settings', label: 'Settings' },

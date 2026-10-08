@@ -130,6 +130,133 @@ export function getTenantStatus(tenantId: string): Promise<TenantStatusResponse>
   return request<TenantStatusResponse>(`/tenants/${tenantId}/status`);
 }
 
+export interface ProductVariant {
+  id: string;
+  sku: string;
+  attributes?: Record<string, string> | null;
+  priceOverride?: number | null;
+  stock: number;
+}
+
+export interface Category {
+  id: string;
+  name: string;
+  slug: string;
+  _count?: { products: number };
+}
+
+export interface Product {
+  id: string;
+  name: string;
+  description?: string | null;
+  price: number;
+  isActive: boolean;
+  categoryId: string;
+  category?: Category | null;
+  variants?: ProductVariant[];
+  createdAt?: string;
+}
+
+export interface ProductListResponse {
+  items: Product[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface ListProductsParams {
+  search?: string;
+  categorySlug?: string;
+  isActive?: 'true' | 'false';
+  page?: number;
+  pageSize?: number;
+}
+
+export function listProducts(
+  tenantSlug: string,
+  accessToken: string,
+  params: ListProductsParams = {},
+): Promise<ProductListResponse> {
+  const qs = new URLSearchParams();
+  if (params.search) qs.set('search', params.search);
+  if (params.categorySlug) qs.set('categorySlug', params.categorySlug);
+  if (params.isActive) qs.set('isActive', params.isActive);
+  if (params.page) qs.set('page', String(params.page));
+  if (params.pageSize) qs.set('pageSize', String(params.pageSize));
+  const suffix = qs.toString() ? `?${qs.toString()}` : '';
+  return request<ProductListResponse>(`/products${suffix}`, { tenantSlug, accessToken });
+}
+
+export function listCategories(tenantSlug: string, accessToken: string): Promise<Category[]> {
+  return request<Category[]>('/categories', { tenantSlug, accessToken });
+}
+
+export function createCategory(
+  tenantSlug: string,
+  accessToken: string,
+  data: { name: string; slug: string },
+): Promise<Category> {
+  return request<Category>('/categories', {
+    method: 'POST',
+    tenantSlug,
+    accessToken,
+    body: JSON.stringify(data),
+  });
+}
+
+export function createProduct(
+  tenantSlug: string,
+  accessToken: string,
+  data: { name: string; description?: string; price: number; categoryId: string },
+): Promise<Product> {
+  return request<Product>('/products', {
+    method: 'POST',
+    tenantSlug,
+    accessToken,
+    body: JSON.stringify(data),
+  });
+}
+
+export function updateProduct(
+  tenantSlug: string,
+  accessToken: string,
+  id: string,
+  data: { name?: string; description?: string; price?: number; categoryId?: string; isActive?: boolean },
+): Promise<Product> {
+  return request<Product>(`/products/${id}`, {
+    method: 'PATCH',
+    tenantSlug,
+    accessToken,
+    body: JSON.stringify(data),
+  });
+}
+
+export function deactivateProduct(
+  tenantSlug: string,
+  accessToken: string,
+  id: string,
+): Promise<Product> {
+  return request<Product>(`/products/${id}/deactivate`, {
+    method: 'POST',
+    tenantSlug,
+    accessToken,
+  });
+}
+
+export function createVariant(
+  tenantSlug: string,
+  accessToken: string,
+  productId: string,
+  data: { sku: string; attributes?: Record<string, string>; priceOverride?: number; stock?: number },
+): Promise<ProductVariant> {
+  return request<ProductVariant>(`/products/${productId}/variants`, {
+    method: 'POST',
+    tenantSlug,
+    accessToken,
+    body: JSON.stringify(data),
+  });
+}
+
 export interface ResendVerificationResponse {
   id: string;
   name: string;
