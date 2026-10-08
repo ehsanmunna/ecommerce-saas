@@ -8,6 +8,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CreateVariantDto } from './dto/create-variant.dto';
 import { ListProductsDto } from './dto/list-products.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
 const DEFAULT_PAGE_SIZE = 20;
@@ -18,6 +19,18 @@ export class CatalogService {
 
   createCategory(tenantDb: TenantPrismaClient, dto: CreateCategoryDto) {
     return tenantDb.category.create({ data: dto });
+  }
+
+  async updateCategory(
+    tenantDb: TenantPrismaClient,
+    id: string,
+    dto: UpdateCategoryDto,
+  ) {
+    const category = await tenantDb.category.findUnique({ where: { id } });
+    if (!category) {
+      throw new NotFoundException('Category not found');
+    }
+    return tenantDb.category.update({ where: { id }, data: dto });
   }
 
   async createProduct(tenantDb: TenantPrismaClient, dto: CreateProductDto) {

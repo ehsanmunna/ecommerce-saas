@@ -18,6 +18,7 @@ import { CreateCategoryDto } from './dto/create-category.dto';
 import { CreateProductDto } from './dto/create-product.dto';
 import { CreateVariantDto } from './dto/create-variant.dto';
 import { ListProductsDto } from './dto/list-products.dto';
+import { UpdateCategoryDto } from './dto/update-category.dto';
 import { UpdateProductDto } from './dto/update-product.dto';
 
 /**
@@ -44,6 +45,15 @@ export class CatalogAdminController {
   @Post('categories')
   createCategory(@Req() req: Request, @Body() dto: CreateCategoryDto) {
     return this.catalogService.createCategory(req.tenantDb!, dto);
+  }
+
+  @Patch('categories/:id')
+  updateCategory(
+    @Req() req: Request,
+    @Param('id') id: string,
+    @Body() dto: UpdateCategoryDto,
+  ) {
+    return this.catalogService.updateCategory(req.tenantDb!, id, dto);
   }
 
   @Post('products')

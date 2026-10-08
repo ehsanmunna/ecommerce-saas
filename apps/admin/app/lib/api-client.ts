@@ -209,6 +209,20 @@ export function createCategory(
   });
 }
 
+export function updateCategory(
+  tenantSlug: string,
+  accessToken: string,
+  id: string,
+  data: { name?: string; slug?: string },
+): Promise<Category> {
+  return request<Category>(`/categories/${id}`, {
+    method: 'PATCH',
+    tenantSlug,
+    accessToken,
+    body: JSON.stringify(data),
+  });
+}
+
 export function createProduct(
   tenantSlug: string,
   accessToken: string,
