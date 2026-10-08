@@ -11,8 +11,8 @@ export class ListProductsDto {
   categorySlug?: string;
 
   @IsOptional()
-  @IsIn(['true', 'false'])
-  isActive?: 'true' | 'false';
+  @IsIn(['active', 'draft', 'archived'])
+  status?: 'active' | 'draft' | 'archived';
 
   @IsOptional()
   @Type(() => Number)

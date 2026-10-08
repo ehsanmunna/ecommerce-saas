@@ -105,7 +105,7 @@ export default function ProductDetailsPage() {
     );
   }
 
-  const price = selectedVariant?.priceOverride ?? product.price;
+  const price = selectedVariant?.priceOverride ?? product.salePrice ?? product.regularPrice;
   const outOfStock = !selectedVariant || selectedVariant.stock <= 0;
 
   return (

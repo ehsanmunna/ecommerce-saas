@@ -22,7 +22,7 @@ export function ProductCard({ product }: { product: Product }) {
         <div className="flex flex-col gap-2 min-w-0">
           <div className="text-base font-bold leading-tight text-[#252b42] truncate">{product.name}</div>
           <div className="text-sm text-text-muted">{product.category.name}</div>
-          <div className="text-base font-bold text-[#252b42]">{formatMoney(product.price)}</div>
+          <div className="text-base font-bold text-[#252b42]">{formatMoney(product.salePrice ?? product.regularPrice)}</div>
         </div>
         <div className="w-10 h-[39px] rounded-full bg-ink hover:bg-ink-hover shrink-0 flex items-center justify-center">
           <span className="font-heading text-white text-2xl leading-none -mt-0.5">+</span>

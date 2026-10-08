@@ -185,7 +185,7 @@ export class CartService {
     let subtotal = 0;
     const items = cart.items.map((item) => {
       const unitPrice = Number(
-        item.variant.priceOverride ?? item.variant.product.price,
+        item.variant.priceOverride ?? item.variant.product.regularPrice,
       );
       const lineTotal = unitPrice * item.quantity;
       subtotal += lineTotal;

@@ -117,10 +117,15 @@ export interface ProductVariant {
 export interface Product {
   id: string;
   name: string;
+  sku: string;
+  shortDescription: string | null;
   description: string | null;
-  price: string;
+  regularPrice: string;
+  salePrice: string | null;
+  stockQuantity: number;
+  mainImage: string | null;
+  status: 'active' | 'draft' | 'archived';
   categoryId: string;
-  isActive: boolean;
   category: Category;
   variants: ProductVariant[];
 }

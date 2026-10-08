@@ -80,14 +80,19 @@ model Category {
 }
 
 model Product {
-  id          String   @id @default(uuid())
-  name        String
-  description String?
-  price       Decimal  @db.Decimal(10, 2)
-  categoryId  String   @map("category_id")
-  isActive    Boolean  @default(true) @map("is_active")
-  createdAt   DateTime @default(now()) @map("created_at")
-  updatedAt   DateTime @updatedAt @map("updated_at")
+  id               String   @id @default(uuid())
+  name             String
+  sku              String   @unique
+  shortDescription String?  @map("short_description")
+  description      String?
+  regularPrice     Decimal  @map("regular_price") @db.Decimal(10, 2)
+  salePrice        Decimal? @map("sale_price") @db.Decimal(10, 2)
+  stockQuantity    Int      @default(0) @map("stock_quantity")
+  mainImage        String?  @map("main_image")
+  status           String   @default("active")
+  categoryId       String   @map("category_id")
+  createdAt        DateTime @default(now()) @map("created_at")
+  updatedAt        DateTime @updatedAt @map("updated_at")
 
   category Category         @relation(fields: [categoryId], references: [id])
   variants ProductVariant[]

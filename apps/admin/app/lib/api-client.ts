@@ -148,9 +148,14 @@ export interface Category {
 export interface Product {
   id: string;
   name: string;
+  sku: string;
+  shortDescription?: string | null;
   description?: string | null;
-  price: number;
-  isActive: boolean;
+  regularPrice: number;
+  salePrice?: number | null;
+  stockQuantity: number;
+  mainImage?: string | null;
+  status: 'active' | 'draft' | 'archived';
   categoryId: string;
   category?: Category | null;
   variants?: ProductVariant[];
@@ -167,7 +172,7 @@ export interface ProductListResponse {
 export interface ListProductsParams {
   search?: string;
   categorySlug?: string;
-  isActive?: 'true' | 'false';
+  status?: 'active' | 'draft' | 'archived';
   page?: number;
   pageSize?: number;
 }
@@ -180,7 +185,7 @@ export function listProducts(
   const qs = new URLSearchParams();
   if (params.search) qs.set('search', params.search);
   if (params.categorySlug) qs.set('categorySlug', params.categorySlug);
-  if (params.isActive) qs.set('isActive', params.isActive);
+  if (params.status) qs.set('status', params.status);
   if (params.page) qs.set('page', String(params.page));
   if (params.pageSize) qs.set('pageSize', String(params.pageSize));
   const suffix = qs.toString() ? `?${qs.toString()}` : '';
@@ -207,7 +212,18 @@ export function createCategory(
 export function createProduct(
   tenantSlug: string,
   accessToken: string,
-  data: { name: string; description?: string; price: number; categoryId: string },
+  data: {
+    name: string;
+    sku: string;
+    shortDescription?: string;
+    description?: string;
+    regularPrice: number;
+    salePrice?: number;
+    stockQuantity?: number;
+    mainImage?: string;
+    status?: 'active' | 'draft' | 'archived';
+    categoryId: string;
+  },
 ): Promise<Product> {
   return request<Product>('/products', {
     method: 'POST',
@@ -221,7 +237,18 @@ export function updateProduct(
   tenantSlug: string,
   accessToken: string,
   id: string,
-  data: { name?: string; description?: string; price?: number; categoryId?: string; isActive?: boolean },
+  data: {
+    name?: string;
+    sku?: string;
+    shortDescription?: string;
+    description?: string;
+    regularPrice?: number;
+    salePrice?: number;
+    stockQuantity?: number;
+    mainImage?: string;
+    status?: 'active' | 'draft' | 'archived';
+    categoryId?: string;
+  },
 ): Promise<Product> {
   return request<Product>(`/products/${id}`, {
     method: 'PATCH',

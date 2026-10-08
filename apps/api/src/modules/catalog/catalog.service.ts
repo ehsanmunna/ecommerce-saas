@@ -30,8 +30,14 @@ export class CatalogService {
     return tenantDb.product.create({
       data: {
         name: dto.name,
+        sku: dto.sku,
+        shortDescription: dto.shortDescription,
         description: dto.description,
-        price: dto.price,
+        regularPrice: dto.regularPrice,
+        salePrice: dto.salePrice,
+        stockQuantity: dto.stockQuantity ?? 0,
+        mainImage: dto.mainImage,
+        status: dto.status ?? 'active',
         categoryId: dto.categoryId,
       },
     });
@@ -50,7 +56,7 @@ export class CatalogService {
     await this.getProductOrThrow(tenantDb, id);
     return tenantDb.product.update({
       where: { id },
-      data: { isActive: false },
+      data: { status: 'archived' },
     });
   }
 
@@ -85,7 +91,7 @@ export class CatalogService {
     const page = query.page ?? 1;
     const pageSize = query.pageSize ?? DEFAULT_PAGE_SIZE;
 
-    const where: Prisma.ProductWhereInput = { isActive: true };
+    const where: Prisma.ProductWhereInput = { status: 'active' };
     if (query.categorySlug) {
       where.category = { slug: query.categorySlug };
     }
@@ -93,7 +99,7 @@ export class CatalogService {
       where.name = { contains: query.search, mode: 'insensitive' };
     }
     if (query.minPrice !== undefined || query.maxPrice !== undefined) {
-      where.price = {
+      where.regularPrice = {
         ...(query.minPrice !== undefined ? { gte: query.minPrice } : {}),
         ...(query.maxPrice !== undefined ? { lte: query.maxPrice } : {}),
       };
@@ -101,9 +107,9 @@ export class CatalogService {
 
     const orderBy: Prisma.ProductOrderByWithRelationInput =
       query.sort === 'price_asc'
-        ? { price: 'asc' }
+        ? { regularPrice: 'asc' }
         : query.sort === 'price_desc'
-          ? { price: 'desc' }
+          ? { regularPrice: 'desc' }
           : { createdAt: 'desc' };
 
     const [items, total] = await Promise.all([
@@ -127,10 +133,8 @@ export class CatalogService {
     const pageSize = query.pageSize ?? DEFAULT_PAGE_SIZE;
 
     const where: Prisma.ProductWhereInput = {};
-    if (query.isActive === 'true') {
-      where.isActive = true;
-    } else if (query.isActive === 'false') {
-      where.isActive = false;
+    if (query.status) {
+      where.status = query.status;
     }
     if (query.categorySlug) {
       where.category = { slug: query.categorySlug };
@@ -169,7 +173,7 @@ export class CatalogService {
       where: { id },
       include: { category: true, variants: true },
     });
-    if (!product || !product.isActive) {
+    if (!product || product.status !== 'active') {
       throw new NotFoundException('Product not found');
     }
     return product;

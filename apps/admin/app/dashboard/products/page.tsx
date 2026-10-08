@@ -17,7 +17,7 @@ export default function ProductsPage() {
   const [total, setTotal] = useState(0);
   const [search, setSearch] = useState('');
   const [categorySlug, setCategorySlug] = useState('');
-  const [isActive, setIsActive] = useState('');
+  const [status, setStatus] = useState('');
   const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
 
@@ -35,7 +35,7 @@ export default function ProductsPage() {
       const result = await listProducts(session.tenantSlug, session.accessToken, {
         search: search || undefined,
         categorySlug: categorySlug || undefined,
-        isActive: (isActive as 'true' | 'false') || undefined,
+        status: (status as 'active' | 'draft' | 'archived') || undefined,
       });
       setProducts(result.items);
       setTotal(result.total);
@@ -44,7 +44,7 @@ export default function ProductsPage() {
     } finally {
       setLoading(false);
     }
-  }, [getToken, search, categorySlug, isActive]);
+  }, [getToken, search, categorySlug, status]);
 
   const refreshCategories = useCallback(async () => {
     try {
@@ -96,10 +96,11 @@ export default function ProductsPage() {
             <option key={c.id} value={c.slug}>{c.name}</option>
           ))}
         </select>
-        <select value={isActive} onChange={(e) => setIsActive(e.target.value)} className="border rounded px-2 py-1 text-sm">
+        <select value={status} onChange={(e) => setStatus(e.target.value)} className="border rounded px-2 py-1 text-sm">
           <option value="">All statuses</option>
-          <option value="true">Active</option>
-          <option value="false">Inactive</option>
+          <option value="active">Active</option>
+          <option value="draft">Draft</option>
+          <option value="archived">Archived</option>
         </select>
       </div>
 
@@ -120,13 +121,13 @@ export default function ProductsPage() {
           {products.map((p) => (
             <tr key={p.id} className="border-b">
               <td className="py-2">{p.name}</td>
-              <td>{p.price}</td>
+              <td>{p.regularPrice}</td>
               <td>{p.category?.name ?? '—'}</td>
-              <td>{p.isActive ? 'Active' : 'Inactive'}</td>
+              <td>{p.status}</td>
               <td>{p.variants?.length ?? 0}</td>
               <td className="text-right space-x-3">
                 <Link href={`/dashboard/products/${p.id}/edit`} className="text-blue-600">Edit</Link>
-                {p.isActive && (
+                {p.status === 'active' && (
                   <button onClick={() => handleDeactivate(p.id)} className="text-red-600">Deactivate</button>
                 )}
               </td>

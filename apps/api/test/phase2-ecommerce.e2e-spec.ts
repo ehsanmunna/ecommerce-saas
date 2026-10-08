@@ -94,7 +94,7 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
       .post('/products')
       .set('x-tenant-slug', slug)
       .set('Authorization', `Bearer ${staffToken}`)
-      .send({ name: unique('Product'), price, categoryId })
+      .send({ name: unique('Product'), sku: unique('PSKU'), regularPrice: price, categoryId })
       .expect(201);
     const product = productRes.body;
 
@@ -269,7 +269,7 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
       .post('/products')
       .set('x-tenant-slug', tenant.slug)
       .set('Authorization', `Bearer ${customer.accessToken}`)
-      .send({ name: 'x', price: 1, categoryId: category.id })
+      .send({ name: 'x', sku: 'x', regularPrice: 1, categoryId: category.id })
       .expect(401);
 
     await request(app.getHttpServer())
