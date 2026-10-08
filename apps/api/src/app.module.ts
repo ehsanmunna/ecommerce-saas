@@ -23,6 +23,7 @@ import { OrdersAdminController } from './modules/orders/orders-admin.controller'
 import { OrdersController } from './modules/orders/orders.controller';
 import { OrdersModule } from './modules/orders/orders.module';
 import { TenantModule } from './modules/tenant/tenant.module';
+import { PlatformModule } from './modules/platform/platform.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { TenantModule } from './modules/tenant/tenant.module';
     TenantDatabaseModule,
     MailModule,
     TenantModule,
+    PlatformModule,
     AuthModule,
     MeModule,
     CustomersModule,

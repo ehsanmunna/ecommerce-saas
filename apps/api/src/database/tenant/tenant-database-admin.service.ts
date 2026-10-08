@@ -55,6 +55,17 @@ export class TenantDatabaseAdminService {
     });
   }
 
+  async databaseExists(databaseName: string): Promise<boolean> {
+    this.assertSafeDatabaseName(databaseName);
+    return this.withMaintenanceClient(async (client) => {
+      const result = await client.query(
+        'SELECT 1 FROM pg_database WHERE datname = $1',
+        [databaseName],
+      );
+      return (result.rowCount ?? 0) > 0;
+    });
+  }
+
   async dropDatabaseIfExists(databaseName: string): Promise<void> {
     this.assertSafeDatabaseName(databaseName);
     await this.withMaintenanceClient(async (client) => {

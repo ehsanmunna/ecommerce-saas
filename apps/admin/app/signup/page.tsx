@@ -96,7 +96,7 @@ export default function SignupPage() {
         ownerPassword,
         plan,
       });
-      router.push(`/signup/check-email?tenantId=${result.id}&email=${encodeURIComponent(ownerEmail.trim())}`);
+      router.push(`/signup/check-email?tenantId=${result.id}&slug=${encodeURIComponent(slug)}&email=${encodeURIComponent(ownerEmail.trim())}`);
     } catch (err) {
       setFormError(err instanceof Error ? err.message : 'Signup failed');
     } finally {

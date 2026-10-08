@@ -138,12 +138,6 @@ export interface ResendVerificationResponse {
   verificationToken?: string;
 }
 
-export function resendVerification(tenantId: string): Promise<ResendVerificationResponse> {
-  return request<ResendVerificationResponse>(`/tenants/${tenantId}/resend-verification`, {
-    method: 'POST',
-  });
-}
-
 export function resendVerificationBySlug(slug: string): Promise<ResendVerificationResponse> {
   return request<ResendVerificationResponse>('/tenants/resend-verification-by-slug', {
     method: 'POST',

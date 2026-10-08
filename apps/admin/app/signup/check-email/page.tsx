@@ -3,13 +3,13 @@
 import { Suspense, useEffect, useState } from 'react';
 import { useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { resendVerification } from '../../lib/api-client';
+import { resendVerificationBySlug } from '../../lib/api-client';
 
 const RESEND_COOLDOWN_SECONDS = 60;
 
 function CheckEmailForm() {
   const searchParams = useSearchParams();
-  const tenantId = searchParams.get('tenantId') ?? '';
+  const tenantSlug = searchParams.get('slug') ?? '';
   const email = searchParams.get('email') ?? '';
 
   const [cooldown, setCooldown] = useState(RESEND_COOLDOWN_SECONDS);
@@ -23,11 +23,11 @@ function CheckEmailForm() {
   }, [cooldown]);
 
   async function handleResend() {
-    if (!tenantId || cooldown > 0 || resending) return;
+    if (!tenantSlug || cooldown > 0 || resending) return;
     setError(null);
     setResending(true);
     try {
-      await resendVerification(tenantId);
+      await resendVerificationBySlug(tenantSlug);
       setCooldown(RESEND_COOLDOWN_SECONDS);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Failed to resend');

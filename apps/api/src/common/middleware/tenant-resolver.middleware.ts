@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   NestMiddleware,
   NotFoundException,
@@ -34,6 +35,11 @@ export class TenantResolverMiddleware implements NestMiddleware {
     });
     if (!tenant) {
       throw new NotFoundException(`No tenant registered for "${slug}"`);
+    }
+    if (tenant.status === 'SUSPENDED') {
+      throw new ForbiddenException(
+        `Tenant "${slug}" is suspended - contact the platform administrator`,
+      );
     }
     if (tenant.status !== 'ACTIVE') {
       throw new ServiceUnavailableException(

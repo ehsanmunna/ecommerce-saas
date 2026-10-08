@@ -69,6 +69,7 @@ export class TenantRegistrationService {
         databaseHost: process.env.TENANT_DB_HOST ?? 'localhost',
         databasePort: Number(process.env.TENANT_DB_PORT ?? 5432),
         status: 'PENDING_VERIFICATION',
+        plan: dto.plan,
         ownerEmail: dto.ownerEmail,
         ownerPasswordHash,
         verificationTokenHash: tokenHash,
@@ -91,6 +92,44 @@ export class TenantRegistrationService {
       verificationToken:
         process.env.NODE_ENV === 'production' ? undefined : rawToken,
     };
+  }
+
+  async createByPlatformAdmin(dto: RegisterTenantDto) {
+    const slug = dto.slug.toLowerCase();
+    if (RESERVED_TENANT_SLUGS.has(slug)) {
+      throw new BadRequestException(`Slug "${dto.slug}" is reserved`);
+    }
+
+    const existing = await this.platformPrisma.tenant.findUnique({
+      where: { slug },
+    });
+    if (existing) {
+      throw new ConflictException(`Slug "${dto.slug}" is already taken`);
+    }
+
+    const databaseName = `tenant_${slug.replace(/-/g, '_')}`;
+    const ownerPasswordHash = await bcrypt.hash(dto.ownerPassword, 10);
+
+    const tenant = await this.platformPrisma.tenant.create({
+      data: {
+        name: dto.companyName,
+        slug,
+        databaseName,
+        databaseHost: process.env.TENANT_DB_HOST ?? 'localhost',
+        databasePort: Number(process.env.TENANT_DB_PORT ?? 5432),
+        status: 'PROVISIONING',
+        plan: dto.plan,
+        ownerEmail: dto.ownerEmail,
+        ownerPasswordHash,
+        emailVerifiedAt: new Date(),
+      },
+    });
+
+    await this.provisioning.provision(tenant.id);
+
+    return this.platformPrisma.tenant.findUniqueOrThrow({
+      where: { id: tenant.id },
+    });
   }
 
   async checkSlug(rawSlug: string) {

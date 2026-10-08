@@ -5,7 +5,6 @@ import { CheckSlugResponseDto } from './dto/check-slug-response.dto';
 import { RegisterTenantDto } from './dto/register-tenant.dto';
 import { TenantSummaryResponseDto } from './dto/tenant-summary-response.dto';
 import { VerifyEmailDto } from './dto/verify-email.dto';
-import { TenantProvisioningService } from './tenant-provisioning.service';
 import { TenantRegistrationService } from './tenant-registration.service';
 
 @ApiTags('tenants')
@@ -13,7 +12,6 @@ import { TenantRegistrationService } from './tenant-registration.service';
 export class TenantController {
   constructor(
     private readonly registrationService: TenantRegistrationService,
-    private readonly provisioningService: TenantProvisioningService,
   ) {}
 
   @Post('register')
@@ -103,45 +101,6 @@ export class TenantController {
   @ApiResponse({ status: 200, type: TenantSummaryResponseDto })
   @ApiResponse({ status: 404, description: 'Tenant not found' })
   async getStatus(@Param('id') id: string) {
-    const tenant = await this.registrationService.getStatus(id);
-    return this.toPublicTenant(tenant);
-  }
-
-  @Post(':id/resend-verification')
-  @ApiOperation({
-    summary: 'Resend the verification email for a tenant pending verification',
-  })
-  @ApiResponse({ status: 201, type: TenantSummaryResponseDto })
-  @ApiResponse({
-    status: 400,
-    description: 'Tenant is not currently PENDING_VERIFICATION',
-  })
-  @ApiResponse({
-    status: 429,
-    description: 'Verification email was sent too recently',
-  })
-  @ApiResponse({
-    status: 502,
-    description:
-      'Verification email could not be sent (mail server unreachable, auth failed, or send failed)',
-  })
-  async resendVerification(@Param('id') id: string) {
-    const { tenant, verificationToken } =
-      await this.registrationService.resendVerification(id);
-    return { ...this.toPublicTenant(tenant), verificationToken };
-  }
-
-  @Post(':id/retry-provisioning')
-  @ApiOperation({
-    summary: 'Retry provisioning for a tenant stuck in PROVISIONING_FAILED',
-  })
-  @ApiResponse({ status: 201, type: TenantSummaryResponseDto })
-  @ApiResponse({
-    status: 400,
-    description: 'Tenant is not currently PROVISIONING_FAILED',
-  })
-  async retryProvisioning(@Param('id') id: string) {
-    await this.provisioningService.retry(id);
     const tenant = await this.registrationService.getStatus(id);
     return this.toPublicTenant(tenant);
   }

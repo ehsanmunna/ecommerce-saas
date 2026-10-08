@@ -141,6 +141,89 @@ Order Confirmation (/order-confirmation/<orderId>)
 My Account → Orders → Order Details/Tracking (/orders/<orderId>)
 ```
 
+## Platform admin (tenant operations)
+
+Separate from the tenant walkthrough above — this is how a platform
+operator works tenants, using the `/platform` section of the admin app
+(`http://localhost:3000/platform`) or the API directly. Every platform
+endpoint requires a platform JWT; tenant staff tokens are rejected.
+
+### Logging in
+
+```bash
+curl -X POST http://localhost:3001/platform/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email": "admin@platform.test", "password": "<password>"}'
+# → { accessToken, ... }   # JWT with type: "platform"
+```
+
+The same credentials sign you in at `http://localhost:3000/platform/login`
+(the token is stored as `platform_token`, distinct from the tenant staff
+token). The first platform admin is seeded from `PLATFORM_ADMIN_EMAIL` /
+`PLATFORM_ADMIN_PASSWORD` in `apps/api/.env`.
+
+```bash
+PLATFORM_TOKEN="<accessToken>"
+AUTH="Authorization: Bearer $PLATFORM_TOKEN"
+```
+
+### Listing and inspecting tenants
+
+```bash
+curl http://localhost:3001/platform/tenants?status=ACTIVE&plan=BASIC \
+  -H "$AUTH"
+curl http://localhost:3001/platform/tenants/<tenantId> -H "$AUTH"
+# → detail includes status, plan, verification/provisioning timestamps,
+#   any provisioning error info
+```
+
+The `/platform` tenant list page mirrors this with status/plan filters,
+pagination, and links to the detail page (`/platform/[id]`).
+
+### Creating a tenant
+
+```bash
+curl -X POST http://localhost:3001/platform/tenants \
+  -H "Content-Type: application/json" -H "$AUTH" \
+  -d '{
+    "companyName": "Globex",
+    "slug": "globex",
+    "ownerEmail": "owner@globex.test",
+    "ownerPassword": "supersecret123",
+    "plan": "PRO"
+  }'
+```
+
+Unlike public signup this takes `ownerPassword` directly and provisions
+the tenant immediately (admin app: `/platform/new`). Note: the planned
+invite-based flow — where the owner sets their own password and the tenant
+waits in `PENDING_OWNER_SETUP` — is not implemented yet (see Known gaps).
+
+### Suspending / activating
+
+```bash
+curl -X PATCH http://localhost:3001/platform/tenants/<tenantId>/status \
+  -H "Content-Type: application/json" -H "$AUTH" \
+  -d '{"status": "SUSPENDED"}'
+```
+
+Suspending flips the tenant's status; from then on the tenant's staff
+and storefront API requests are rejected with 403. `{"status": "ACTIVE"}`
+reactivates (the service checks the tenant database exists before
+allowing `ACTIVE`).
+
+### Repair actions
+
+```bash
+POST /platform/tenants/<tenantId>/resend-verification      # new verify email
+POST /platform/tenants/<tenantId>/revoke-verification-token # expire pending token
+POST /platform/tenants/<tenantId>/retry-provisioning        # re-run provisioning
+PATCH /platform/tenants/<tenantId>/plan   -d '{"plan": "ENTERPRISE"}'
+```
+
+These replace the old unauthenticated `/tenants/*` repair endpoints,
+which have been removed (and now 404).
+
 ## Known gaps this walkthrough exposes
 
 1. **The admin dashboard can't do step 3 yet.** Its Products/Orders/Customers
@@ -160,3 +243,10 @@ My Account → Orders → Order Details/Tracking (/orders/<orderId>)
    `openspec/changes/add-storefront-frontend/design.md`) — there is no
    settings/theme API yet, so a second tenant looks identical to the
    first, just with different products.
+5. **Invite-based tenant onboarding isn't built yet.** `POST /platform/tenants`
+   still takes `ownerPassword` from the platform admin and provisions
+   immediately; the `PENDING_OWNER_SETUP` invite flow
+   (`add-platform-admin` tasks 3.3/3.9/5.5/5.6) is still pending, so
+   "create tenant -> owner sets own password" does not exist yet.
+   Resend/revoke-invite endpoints and the public accept-invite page are
+   likewise not live.
