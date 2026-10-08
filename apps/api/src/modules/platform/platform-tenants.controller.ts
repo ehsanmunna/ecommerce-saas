@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Patch,
@@ -51,9 +52,15 @@ export class PlatformTenantsController {
   }
 
   @Patch(':id/status')
-  @ApiOperation({ summary: 'Suspend or activate a tenant' })
+  @ApiOperation({ summary: 'Set a tenant status (ACTIVE/SUSPENDED/EXPIRED)' })
   updateStatus(@Param('id') id: string, @Body() dto: UpdateTenantStatusDto) {
     return this.tenantsService.updateStatus(id, dto);
+  }
+
+  @Delete(':id')
+  @ApiOperation({ summary: 'Soft-delete a tenant (status becomes DELETED)' })
+  remove(@Param('id') id: string) {
+    return this.tenantsService.delete(id);
   }
 
   @Patch(':id/plan')

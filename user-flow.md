@@ -178,7 +178,10 @@ curl http://localhost:3001/platform/tenants/<tenantId> -H "$AUTH"
 ```
 
 The `/platform` tenant list page mirrors this with status/plan filters,
-pagination, and links to the detail page (`/platform/[id]`).
+pagination, links to the detail page (`/platform/[id]`), a per-row status
+selector (ACTIVE/SUSPENDED/EXPIRED), and a per-row Delete button (with a
+confirmation prompt). Deleted tenants are hidden from the default list and
+reappear when filtering by status `DELETED`.
 
 ### Creating a tenant
 
@@ -210,7 +213,19 @@ curl -X PATCH http://localhost:3001/platform/tenants/<tenantId>/status \
 Suspending flips the tenant's status; from then on the tenant's staff
 and storefront API requests are rejected with 403. `{"status": "ACTIVE"}`
 reactivates (the service checks the tenant database exists before
-allowing `ACTIVE`).
+allowing `ACTIVE`). `{"status": "EXPIRED"}` also blocks tenant access with
+403, same as SUSPENDED and DELETED.
+
+### Deleting a tenant
+
+```bash
+curl -X DELETE http://localhost:3001/platform/tenants/<tenantId> -H "$AUTH"
+```
+
+Delete is a soft-delete: the tenant's status becomes `DELETED`, the record
+and its database are preserved, and tenant API/storefront access is
+rejected with 403. `DELETED` cannot be set through the status endpoint
+(use DELETE instead), and deleting an already-deleted tenant returns 409.
 
 ### Repair actions
 

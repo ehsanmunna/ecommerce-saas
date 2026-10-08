@@ -3,6 +3,7 @@
 import { FormEvent, useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { createPlatformTenant, getPlatformSession } from '../../lib/platform-api-client';
+import PasswordInput from '../../components/password-input';
 
 export default function NewPlatformTenantPage() {
   const router = useRouter();
@@ -51,7 +52,7 @@ export default function NewPlatformTenantPage() {
         </label>
         <label className="flex flex-col gap-1 text-sm">
           Owner password
-          <input type="password" className="border border-gray-300 rounded px-3 py-2" value={ownerPassword} onChange={(e) => setOwnerPassword(e.target.value)} required />
+          <PasswordInput className="border border-gray-300 rounded px-3 py-2" value={ownerPassword} onChange={(e) => setOwnerPassword(e.target.value)} required />
         </label>
         <label className="flex flex-col gap-1 text-sm">
           Plan

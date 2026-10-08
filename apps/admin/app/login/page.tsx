@@ -3,6 +3,7 @@
 import { FormEvent, Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { login, setSession } from '../lib/api-client';
+import PasswordInput from '../components/password-input';
 
 function LoginForm() {
   const router = useRouter();
@@ -63,8 +64,7 @@ function LoginForm() {
 
         <label className="flex flex-col gap-1 text-sm">
           Password
-          <input
-            type="password"
+          <PasswordInput
             className="border border-gray-300 rounded px-3 py-2"
             value={password}
             onChange={(event) => setPassword(event.target.value)}

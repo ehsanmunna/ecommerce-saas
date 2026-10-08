@@ -18,6 +18,8 @@ export class TenantSummaryResponseDto {
       'ACTIVE',
       'PROVISIONING_FAILED',
       'SUSPENDED',
+      'EXPIRED',
+      'DELETED',
     ],
   })
   status!: string;

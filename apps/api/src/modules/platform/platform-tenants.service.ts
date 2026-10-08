@@ -17,6 +17,8 @@ const TENANT_STATUSES = [
   'ACTIVE',
   'PROVISIONING_FAILED',
   'SUSPENDED',
+  'EXPIRED',
+  'DELETED',
 ] as const;
 
 @Injectable()
@@ -46,6 +48,8 @@ export class PlatformTenantsService {
         throw new BadRequestException(`Unknown status "${query.status}"`);
       }
       where.status = query.status;
+    } else {
+      where.status = { not: 'DELETED' };
     }
     if (query.plan) {
       where.plan = query.plan;
@@ -84,6 +88,12 @@ export class PlatformTenantsService {
         data: { status: 'SUSPENDED' },
       });
     }
+    if (dto.status === 'EXPIRED') {
+      return this.platformPrisma.tenant.update({
+        where: { id },
+        data: { status: 'EXPIRED' },
+      });
+    }
     if (dto.status === 'ACTIVE') {
       const exists = await this.dbAdmin.databaseExists(tenant.databaseName);
       if (!exists) {
@@ -97,8 +107,19 @@ export class PlatformTenantsService {
       });
     }
     throw new BadRequestException(
-      'Platform admins may only set status to ACTIVE or SUSPENDED',
+      'Platform admins may only set status to ACTIVE, SUSPENDED, or EXPIRED',
     );
+  }
+
+  async delete(id: string) {
+    const tenant = await this.getById(id);
+    if (tenant.status === 'DELETED') {
+      throw new ConflictException('Tenant is already deleted');
+    }
+    return this.platformPrisma.tenant.update({
+      where: { id },
+      data: { status: 'DELETED' },
+    });
   }
 
   async resendVerification(id: string) {

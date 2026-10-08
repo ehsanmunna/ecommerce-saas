@@ -108,6 +108,14 @@ export function updateTenantStatus(id: string, status: string, accessToken: stri
   });
 }
 
+
+export function deleteTenant(id: string, accessToken: string): Promise<PlatformTenant> {
+  return platformRequest<PlatformTenant>(`/platform/tenants/${id}`, {
+    method: 'DELETE',
+    accessToken,
+  });
+}
+
 export function updateTenantPlan(id: string, plan: string, accessToken: string): Promise<PlatformTenant> {
   return platformRequest<PlatformTenant>(`/platform/tenants/${id}/plan`, {
     method: 'PATCH',

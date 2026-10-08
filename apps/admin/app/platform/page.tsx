@@ -3,18 +3,21 @@
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
 import {
+  deleteTenant,
   fetchPlatformTenants,
   getPlatformSession,
   PlatformTenant,
+  updateTenantStatus,
 } from '../lib/platform-api-client';
 
-const STATUSES = ['', 'PENDING_VERIFICATION', 'PROVISIONING', 'ACTIVE', 'PROVISIONING_FAILED', 'SUSPENDED'];
+const STATUSES = ['', 'PENDING_VERIFICATION', 'PROVISIONING', 'ACTIVE', 'PROVISIONING_FAILED', 'SUSPENDED', 'EXPIRED', 'DELETED'];
 
 export default function PlatformTenantsPage() {
   const [status, setStatus] = useState('');
   const [tenants, setTenants] = useState<PlatformTenant[]>([]);
   const [total, setTotal] = useState(0);
   const [error, setError] = useState<string | null>(null);
+  const [refreshKey, setRefreshKey] = useState(0);
 
   useEffect(() => {
     const session = getPlatformSession();
@@ -25,7 +28,26 @@ export default function PlatformTenantsPage() {
         setTotal(result.total);
       })
       .catch((err) => setError(err instanceof Error ? err.message : 'Failed to load tenants'));
-  }, [status]);
+  }, [status, refreshKey]);
+
+  const refresh = () => setRefreshKey((key) => key + 1);
+
+  const handleStatusChange = (tenant: PlatformTenant, next: string) => {
+    const session = getPlatformSession();
+    if (!session) return;
+    updateTenantStatus(tenant.id, next, session.accessToken)
+      .then(refresh)
+      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to update status'));
+  };
+
+  const handleDelete = (tenant: PlatformTenant) => {
+    const session = getPlatformSession();
+    if (!session) return;
+    if (!window.confirm(`Delete tenant "${tenant.name}"? Its status will become DELETED.`)) return;
+    deleteTenant(tenant.id, session.accessToken)
+      .then(refresh)
+      .catch((err) => setError(err instanceof Error ? err.message : 'Failed to delete tenant'));
+  };
 
   return (
     <div className="flex flex-col gap-4">
@@ -58,6 +80,7 @@ export default function PlatformTenantsPage() {
             <th>Status</th>
             <th>Plan</th>
             <th>Created</th>
+            <th>Actions</th>
           </tr>
         </thead>
         <tbody>
@@ -72,6 +95,28 @@ export default function PlatformTenantsPage() {
               <td>{tenant.status}</td>
               <td>{tenant.plan}</td>
               <td>{new Date(tenant.createdAt).toLocaleDateString()}</td>
+              <td className="flex items-center gap-2 py-1">
+                <select
+                  className="border border-gray-300 rounded px-2 py-1 text-xs"
+                  value={tenant.status}
+                  onChange={(event) => handleStatusChange(tenant, event.target.value)}
+                >
+                  {(['ACTIVE', 'SUSPENDED', 'EXPIRED'] as const).map((value) => (
+                    <option key={value} value={value}>
+                      {value}
+                    </option>
+                  ))}
+                  {tenant.status !== 'ACTIVE' && tenant.status !== 'SUSPENDED' && tenant.status !== 'EXPIRED' && (
+                    <option value={tenant.status}>{tenant.status}</option>
+                  )}
+                </select>
+                <button
+                  className="text-xs text-red-600 underline"
+                  onClick={() => handleDelete(tenant)}
+                >
+                  Delete
+                </button>
+              </td>
             </tr>
           ))}
         </tbody>

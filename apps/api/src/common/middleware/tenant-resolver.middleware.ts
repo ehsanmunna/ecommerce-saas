@@ -41,6 +41,11 @@ export class TenantResolverMiddleware implements NestMiddleware {
         `Tenant "${slug}" is suspended - contact the platform administrator`,
       );
     }
+    if (tenant.status === 'EXPIRED' || tenant.status === 'DELETED') {
+      throw new ForbiddenException(
+        `Tenant "${slug}" is not available (status: ${tenant.status})`,
+      );
+    }
     if (tenant.status !== 'ACTIVE') {
       throw new ServiceUnavailableException(
         `Tenant "${slug}" is not currently active (status: ${tenant.status})`,
