@@ -2,6 +2,7 @@ import {
   Injectable,
   UnauthorizedException,
   BadRequestException,
+  InternalServerErrorException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
@@ -97,33 +98,39 @@ export class AuthService {
     tenantDb: TenantPrismaClient,
     email: string,
   ): Promise<{ message: string }> {
-    const user = await tenantDb.user.findUnique({ where: { email } });
-    if (!user)
-      return { message: 'If an account exists, a reset email has been sent' };
+    try {
+      const user = await tenantDb.user.findUnique({ where: { email } });
+      if (!user)
+        return { message: 'If an account exists, a reset email has been sent' };
 
-    const recent = await this.platformPrisma.passwordResetToken.findFirst({
-      where: { userId: user.id },
-      orderBy: { createdAt: 'desc' },
-    });
-    if (
-      recent &&
-      Date.now() - recent.createdAt.getTime() < RESET_RATE_LIMIT_MS
-    ) {
+      const recent = await this.platformPrisma.passwordResetToken.findFirst({
+        where: { userId: user.id },
+        orderBy: { createdAt: 'desc' },
+      });
+      if (
+        recent &&
+        Date.now() - recent.createdAt.getTime() < RESET_RATE_LIMIT_MS
+      ) {
+        return { message: 'If an account exists, a reset email has been sent' };
+      }
+
+      const token = crypto.randomBytes(32).toString('hex');
+      const tokenHash = this.hashToken(token);
+      const expiresAt = new Date(Date.now() + RESET_TOKEN_TTL_MS);
+
+      await this.platformPrisma.passwordResetToken.create({
+        data: { tokenHash, userId: user.id, expiresAt },
+      });
+
+      const resetLink = `http://localhost:3000/reset-password?token=${token}&slug=${tenant.slug}`;
+      await this.mailService.sendPasswordReset(email, resetLink);
+
       return { message: 'If an account exists, a reset email has been sent' };
+    } catch {
+      throw new InternalServerErrorException(
+        'Unable to process password reset request',
+      );
     }
-
-    const token = crypto.randomBytes(32).toString('hex');
-    const tokenHash = this.hashToken(token);
-    const expiresAt = new Date(Date.now() + RESET_TOKEN_TTL_MS);
-
-    await this.platformPrisma.passwordResetToken.create({
-      data: { tokenHash, userId: user.id, expiresAt },
-    });
-
-    const resetLink = `http://localhost:3000/reset-password?token=${token}&slug=${tenant.slug}`;
-    await this.mailService.sendPasswordReset(email, resetLink);
-
-    return { message: 'If an account exists, a reset email has been sent' };
   }
 
   async resetPassword(
@@ -131,31 +138,38 @@ export class AuthService {
     token: string,
     newPassword: string,
   ): Promise<{ message: string }> {
-    const tokenHash = this.hashToken(token);
-    const record = await this.platformPrisma.passwordResetToken.findUnique({
-      where: { tokenHash },
-    });
+    try {
+      const tokenHash = this.hashToken(token);
+      const record = await this.platformPrisma.passwordResetToken.findUnique({
+        where: { tokenHash },
+      });
 
-    if (!record || record.usedAt || record.expiresAt < new Date()) {
-      throw new BadRequestException('Invalid or expired token');
+      if (!record || record.usedAt || record.expiresAt < new Date()) {
+        throw new BadRequestException('Invalid or expired token');
+      }
+
+      const passwordHash = await bcrypt.hash(newPassword, 10);
+      await this.platformPrisma.$transaction([
+        this.platformPrisma.passwordResetToken.update({
+          where: { id: record.id },
+          data: { usedAt: new Date() },
+        }),
+      ]);
+      await tenantDb.user.update({
+        where: { id: record.userId },
+        data: { passwordHash },
+      });
+      await tenantDb.refreshToken.deleteMany({
+        where: { userId: record.userId },
+      });
+
+      return { message: 'Password has been reset' };
+    } catch (error) {
+      if (error instanceof BadRequestException) throw error;
+      throw new InternalServerErrorException(
+        'Unable to process password reset request',
+      );
     }
-
-    const passwordHash = await bcrypt.hash(newPassword, 10);
-    await this.platformPrisma.$transaction([
-      this.platformPrisma.passwordResetToken.update({
-        where: { id: record.id },
-        data: { usedAt: new Date() },
-      }),
-    ]);
-    await tenantDb.user.update({
-      where: { id: record.userId },
-      data: { passwordHash },
-    });
-    await tenantDb.refreshToken.deleteMany({
-      where: { userId: record.userId },
-    });
-
-    return { message: 'Password has been reset' };
   }
 
   private signAccessToken(payload: JwtAccessTokenPayload): string {
