@@ -412,3 +412,26 @@ export function cancelOrder(
     accessToken,
   });
 }
+
+export function forgotPasswordStaff(
+  tenantSlug: string,
+  email: string,
+): Promise<{ message: string }> {
+  return request<{ message: string }>('/auth/forgot-password', {
+    method: 'POST',
+    tenantSlug,
+    body: JSON.stringify({ email }),
+  });
+}
+
+export function resetPasswordStaff(
+  tenantSlug: string,
+  token: string,
+  newPassword: string,
+): Promise<{ message: string }> {
+  return request<{ message: string }>('/auth/reset-password', {
+    method: 'POST',
+    tenantSlug,
+    body: JSON.stringify({ token, newPassword }),
+  });
+}

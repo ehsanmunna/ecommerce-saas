@@ -3,6 +3,8 @@ import { Request } from 'express';
 import { LoginDto } from '../auth/dto/login.dto';
 import { RefreshTokenDto } from '../auth/dto/refresh-token.dto';
 import { CustomerAuthService } from './customer-auth.service';
+import { CustomerForgotPasswordDto } from './dto/customer-forgot-password.dto';
+import { CustomerResetPasswordDto } from './dto/customer-reset-password.dto';
 import { RegisterCustomerDto } from './dto/register-customer.dto';
 
 @Controller('storefront/auth')
@@ -43,5 +45,23 @@ export class CustomerAuthController {
   async logout(@Req() req: Request, @Body() dto: RefreshTokenDto) {
     await this.customerAuthService.revoke(req.tenantDb!, dto.refreshToken);
     return { success: true };
+  }
+
+  @Post('forgot-password')
+  forgotPassword(@Req() req: Request, @Body() dto: CustomerForgotPasswordDto) {
+    return this.customerAuthService.forgotPassword(
+      req.tenant!,
+      req.tenantDb!,
+      dto.email,
+    );
+  }
+
+  @Post('reset-password')
+  resetPassword(@Req() req: Request, @Body() dto: CustomerResetPasswordDto) {
+    return this.customerAuthService.resetPassword(
+      req.tenantDb!,
+      dto.token,
+      dto.newPassword,
+    );
   }
 }

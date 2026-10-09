@@ -163,3 +163,54 @@ describe('MailService.sendTenantVerification failure classification', () => {
     expect((failure as MailSendError).cause).toBe(original);
   });
 });
+
+describe('MailService.sendPasswordReset', () => {
+  const savedEnv: Record<string, string | undefined> = {};
+
+  beforeEach(() => {
+    for (const key of SMTP_ENV_KEYS) {
+      savedEnv[key] = process.env[key];
+    }
+    process.env.SMTP_HOST = 'smtp.example.test';
+    process.env.SMTP_PORT = '587';
+  });
+
+  afterEach(() => {
+    for (const key of SMTP_ENV_KEYS) {
+      if (savedEnv[key] === undefined) {
+        delete process.env[key];
+      } else {
+        process.env[key] = savedEnv[key];
+      }
+    }
+    jest.restoreAllMocks();
+  });
+
+  it('sends password reset email with reset link', async () => {
+    const service = new MailService();
+    const sendMail = jest.fn().mockResolvedValue({ messageId: '1' });
+    (service as unknown as { transporter: unknown }).transporter = { sendMail };
+    await service.sendPasswordReset(
+      'user@test.com',
+      'http://localhost:3000/reset-password?token=abc',
+    );
+    expect(sendMail).toHaveBeenCalledWith(
+      expect.objectContaining({
+        to: 'user@test.com',
+        subject: 'Reset your password',
+      }),
+    );
+  });
+
+  it('logs and resolves without a transporter when SMTP is not configured', async () => {
+    delete process.env.SMTP_HOST;
+    const service = new MailService();
+    expect(service.isConfigured).toBe(false);
+    await expect(
+      service.sendPasswordReset(
+        'user@test.com',
+        'http://localhost:3000/reset-password?token=abc',
+      ),
+    ).resolves.toBeUndefined();
+  });
+});

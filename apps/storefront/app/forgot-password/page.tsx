@@ -2,20 +2,27 @@
 
 import { FormEvent, useState } from 'react';
 import Link from 'next/link';
+import { forgotPasswordCustomer } from '../lib/api-client';
 import { PageShell } from '../components/PageShell';
 
-/**
- * Submission is stubbed, not wired to a real request - no email-sending
- * infrastructure exists in this system yet. See storefront-web spec,
- * "Forgot Password is present but its submission is stubbed".
- */
 export default function ForgotPasswordPage() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [submitting, setSubmitting] = useState(false);
 
-  function handleSubmit(event: FormEvent) {
+  async function handleSubmit(event: FormEvent) {
     event.preventDefault();
-    setSubmitted(true);
+    setError(null);
+    setSubmitting(true);
+    try {
+      await forgotPasswordCustomer(email);
+      setSubmitted(true);
+    } catch (err) {
+      setError(err instanceof Error ? err.message : 'Request failed');
+    } finally {
+      setSubmitting(false);
+    }
   }
 
   return (
@@ -26,8 +33,8 @@ export default function ForgotPasswordPage() {
             <>
               <h1 className="font-heading text-3xl font-bold text-[#2f2f2f]">Check Your Email</h1>
               <p className="text-sm text-text-muted">
-                Password reset isn&apos;t available yet — this system doesn&apos;t send email yet. Please contact
-                support if you need help getting back into your account.
+                If an account exists for {email}, we&apos;ve sent a password reset link. It expires in 15
+                minutes.
               </p>
               <Link
                 href="/login"
@@ -50,11 +57,13 @@ export default function ForgotPasswordPage() {
                 required
                 className="h-12 rounded-[10px] border-2 border-border px-4 text-sm outline-none focus:border-primary"
               />
+              {error && <p className="text-sm text-red-600">{error}</p>}
               <button
                 type="submit"
-                className="h-[51px] rounded-[20px] bg-primary hover:bg-primary-hover font-bold text-[#363636]"
+                disabled={submitting}
+                className="h-[51px] rounded-[20px] bg-primary hover:bg-primary-hover font-bold text-[#363636] disabled:opacity-50"
               >
-                Send Reset Link
+                {submitting ? 'Sending…' : 'Send Reset Link'}
               </button>
               <p className="text-center text-sm text-text-muted">
                 Remembered your password?{' '}

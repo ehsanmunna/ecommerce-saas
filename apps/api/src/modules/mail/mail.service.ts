@@ -102,6 +102,47 @@ export class MailService implements OnModuleInit {
     return this.transporter !== null;
   }
 
+  async sendPasswordReset(email: string, resetLink: string): Promise<void> {
+    const from = process.env.SMTP_FROM ?? 'Ecommerce SaaS <no-reply@localhost>';
+    const subject = 'Reset your password';
+    const text =
+      `You requested a password reset.\n\n` +
+      `Click the link below to set a new password:\n${resetLink}\n\n` +
+      `This link expires in 15 minutes. If you did not request this, ignore this email.`;
+    const html =
+      `<p>You requested a password reset.</p>` +
+      `<p><a href="${this.escapeHtml(resetLink)}">Reset your password</a></p>` +
+      `<p>This link expires in 15 minutes. If you did not request this, ignore this email.</p>`;
+
+    if (!this.transporter) {
+      this.logger.warn(
+        `SMTP not configured - password reset email to ${email} logged instead: ${resetLink}`,
+      );
+      return;
+    }
+
+    try {
+      await this.transporter.sendMail({
+        from,
+        to: email,
+        subject,
+        text,
+        html,
+      });
+    } catch (error) {
+      const category = classifyMailError(error);
+      this.logger.error(
+        `Failed to send password reset email to ${email} (${category}): ${errorMessage(error)}`,
+      );
+      throw new MailSendError(
+        category,
+        `Failed to send password reset email (${category})`,
+        error,
+      );
+    }
+    this.logger.log(`Password reset email sent to ${email}`);
+  }
+
   async sendTenantVerification(email: TenantVerificationEmail): Promise<void> {
     const from = process.env.SMTP_FROM ?? 'Ecommerce SaaS <no-reply@localhost>';
     const subject = `Verify your ${email.companyName} store`;

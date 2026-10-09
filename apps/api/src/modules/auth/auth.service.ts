@@ -1,17 +1,29 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common';
+import {
+  Injectable,
+  UnauthorizedException,
+  BadRequestException,
+} from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import * as bcrypt from 'bcrypt';
 import * as crypto from 'node:crypto';
 import type { JwtAccessTokenPayload } from '@ecommerce-saas/types';
 import type { Tenant } from '@prisma-clients/platform';
 import type { PrismaClient as TenantPrismaClient } from '@prisma-clients/tenant';
+import { MailService } from '../mail/mail.service';
+import { PlatformPrismaService } from '../../database/platform/platform-prisma.service';
 
 const ACCESS_TOKEN_TTL = process.env.JWT_ACCESS_TTL ?? '15m';
 const REFRESH_TOKEN_TTL_MS = 30 * 24 * 60 * 60 * 1000;
+const RESET_TOKEN_TTL_MS = 15 * 60 * 1000;
+const RESET_RATE_LIMIT_MS = 60 * 1000;
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService: JwtService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly mailService: MailService,
+    private readonly platformPrisma: PlatformPrismaService,
+  ) {}
 
   async login(
     tenant: Tenant,
@@ -78,6 +90,72 @@ export class AuthService {
       where: { tokenHash, revokedAt: null },
       data: { revokedAt: new Date() },
     });
+  }
+
+  async forgotPassword(
+    tenant: Tenant,
+    tenantDb: TenantPrismaClient,
+    email: string,
+  ): Promise<{ message: string }> {
+    const user = await tenantDb.user.findUnique({ where: { email } });
+    if (!user)
+      return { message: 'If an account exists, a reset email has been sent' };
+
+    const recent = await this.platformPrisma.passwordResetToken.findFirst({
+      where: { userId: user.id },
+      orderBy: { createdAt: 'desc' },
+    });
+    if (
+      recent &&
+      Date.now() - recent.createdAt.getTime() < RESET_RATE_LIMIT_MS
+    ) {
+      return { message: 'If an account exists, a reset email has been sent' };
+    }
+
+    const token = crypto.randomBytes(32).toString('hex');
+    const tokenHash = this.hashToken(token);
+    const expiresAt = new Date(Date.now() + RESET_TOKEN_TTL_MS);
+
+    await this.platformPrisma.passwordResetToken.create({
+      data: { tokenHash, userId: user.id, expiresAt },
+    });
+
+    const resetLink = `http://localhost:3000/reset-password?token=${token}&slug=${tenant.slug}`;
+    await this.mailService.sendPasswordReset(email, resetLink);
+
+    return { message: 'If an account exists, a reset email has been sent' };
+  }
+
+  async resetPassword(
+    tenantDb: TenantPrismaClient,
+    token: string,
+    newPassword: string,
+  ): Promise<{ message: string }> {
+    const tokenHash = this.hashToken(token);
+    const record = await this.platformPrisma.passwordResetToken.findUnique({
+      where: { tokenHash },
+    });
+
+    if (!record || record.usedAt || record.expiresAt < new Date()) {
+      throw new BadRequestException('Invalid or expired token');
+    }
+
+    const passwordHash = await bcrypt.hash(newPassword, 10);
+    await this.platformPrisma.$transaction([
+      this.platformPrisma.passwordResetToken.update({
+        where: { id: record.id },
+        data: { usedAt: new Date() },
+      }),
+    ]);
+    await tenantDb.user.update({
+      where: { id: record.userId },
+      data: { passwordHash },
+    });
+    await tenantDb.refreshToken.deleteMany({
+      where: { userId: record.userId },
+    });
+
+    return { message: 'Password has been reset' };
   }
 
   private signAccessToken(payload: JwtAccessTokenPayload): string {

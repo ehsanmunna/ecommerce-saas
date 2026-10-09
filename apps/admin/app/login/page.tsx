@@ -1,6 +1,7 @@
 'use client';
 
 import { FormEvent, Suspense, useEffect, useState } from 'react';
+import Link from 'next/link';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { login, setSession } from '../lib/api-client';
 import PasswordInput from '../components/password-input';
@@ -73,6 +74,15 @@ function LoginForm() {
         </label>
 
         {error && <p className="text-sm text-red-600">{error}</p>}
+
+        <div className="text-right -mt-2">
+          <Link
+            href={tenantSlug ? `/forgot-password?slug=${tenantSlug}` : '/forgot-password'}
+            className="text-sm text-gray-500 hover:text-gray-800"
+          >
+            Forgot password?
+          </Link>
+        </div>
 
         <button
           type="submit"
