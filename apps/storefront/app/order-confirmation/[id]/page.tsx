@@ -53,7 +53,15 @@ export default function OrderConfirmationPage() {
 
             <div className="flex flex-col gap-2 text-left rounded-2xl border-2 border-border p-6">
               <div className="text-base font-bold text-[#2f2f2f] mb-2">Order Summary</div>
-              <div className="flex justify-between text-sm">
+              {order.items.map((item) => (
+                <div key={item.id} className="flex justify-between text-sm">
+                  <span className="text-text-muted">
+                    {item.productName ?? item.variantId.slice(0, 8)} × {item.quantity}
+                  </span>
+                  <span className="font-semibold">{formatMoney(Number(item.unitPrice) * item.quantity)}</span>
+                </div>
+              ))}
+              <div className="flex justify-between text-sm pt-2 border-t border-border">
                 <span className="text-text-muted">Subtotal</span>
                 <span className="font-semibold">{formatMoney(order.subtotal)}</span>
               </div>

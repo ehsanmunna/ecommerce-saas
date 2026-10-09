@@ -300,6 +300,9 @@ export interface OrderItemView {
   variantId: string;
   quantity: number;
   unitPrice: string;
+  productName: string;
+  sku: string | null;
+  attributes: Record<string, string> | null;
 }
 
 export interface OrderView {

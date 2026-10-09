@@ -260,28 +260,20 @@ describe('Tenant lifecycle (e2e)', () => {
   });
 
   it('throttles resend-verification within 60 seconds', async () => {
-    const regRes = await request(app.getHttpServer())
-      .post('/tenants/register')
-      .send({
-        companyName: 'Throttle',
-        slug: uniqueSlug('throttle'),
-        ownerEmail: 't@t.test',
-        ownerPassword: 'supersecret123',
-        plan: 'BASIC',
-      })
-      .expect(201);
-    const tenantId = regRes.body.id;
+    const { slug } = await registerPending('throttle');
 
     await request(app.getHttpServer())
-      .post(`/tenants/${tenantId}/resend-verification`)
+      .post('/tenants/resend-verification-by-slug')
+      .send({ slug })
       .expect(429);
   });
 
   it('rejects resend-verification for a non-pending tenant', async () => {
-    const { id } = await registerAndVerify('resentrant');
+    const { slug } = await registerAndVerify('resentrant');
 
     await request(app.getHttpServer())
-      .post(`/tenants/${id}/resend-verification`)
+      .post('/tenants/resend-verification-by-slug')
+      .send({ slug })
       .expect(400);
   });
 

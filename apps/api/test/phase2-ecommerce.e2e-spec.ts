@@ -94,7 +94,12 @@ describe('Phase 2 - Ecommerce (e2e)', () => {
       .post('/products')
       .set('x-tenant-slug', slug)
       .set('Authorization', `Bearer ${staffToken}`)
-      .send({ name: unique('Product'), sku: unique('PSKU'), regularPrice: price, categoryId })
+      .send({
+        name: unique('Product'),
+        sku: unique('PSKU'),
+        regularPrice: price,
+        categoryId,
+      })
       .expect(201);
     const product = productRes.body;
 

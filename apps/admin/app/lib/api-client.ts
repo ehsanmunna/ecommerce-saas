@@ -312,3 +312,103 @@ export function resendVerificationBySlug(slug: string): Promise<ResendVerificati
     body: JSON.stringify({ slug }),
   });
 }
+
+// --- Orders ---
+
+export interface AdminOrderItem {
+  id: string;
+  variantId: string;
+  quantity: number;
+  unitPrice: string;
+  productName: string;
+  sku: string | null;
+  attributes: Record<string, string> | null;
+}
+
+export interface AdminOrder {
+  id: string;
+  status: string;
+  paymentStatus: string;
+  paymentMethod: string;
+  deliveryMethod: string;
+  shippingRecipient: string;
+  shippingLine1: string;
+  shippingLine2: string | null;
+  shippingCity: string;
+  shippingRegion: string | null;
+  shippingPostalCode: string;
+  shippingCountry: string;
+  couponCode: string | null;
+  subtotal: string;
+  shipping: string;
+  total: string;
+  createdAt: string;
+  updatedAt: string;
+  customer: {
+    id: string;
+    email: string;
+    firstName: string | null;
+    lastName: string | null;
+  };
+  items: AdminOrderItem[];
+}
+
+export interface AdminOrderListResult {
+  items: AdminOrder[];
+  total: number;
+  page: number;
+  pageSize: number;
+}
+
+export interface ListOrdersParams {
+  status?: string;
+  paymentStatus?: string;
+  search?: string;
+  page?: number;
+  pageSize?: number;
+}
+
+export function listOrders(
+  tenantSlug: string,
+  accessToken: string,
+  params: ListOrdersParams = {},
+): Promise<AdminOrderListResult> {
+  const qs = new URLSearchParams();
+  if (params.status) qs.set('status', params.status);
+  if (params.paymentStatus) qs.set('paymentStatus', params.paymentStatus);
+  if (params.search) qs.set('search', params.search);
+  if (params.page) qs.set('page', String(params.page));
+  if (params.pageSize) qs.set('pageSize', String(params.pageSize));
+  const suffix = qs.toString() ? `?${qs.toString()}` : '';
+  return request<AdminOrderListResult>(`/orders${suffix}`, { tenantSlug, accessToken });
+}
+
+export function getOrder(tenantSlug: string, accessToken: string, id: string): Promise<AdminOrder> {
+  return request<AdminOrder>(`/orders/${id}`, { tenantSlug, accessToken });
+}
+
+export function updateOrderStatus(
+  tenantSlug: string,
+  accessToken: string,
+  id: string,
+  status: string,
+): Promise<AdminOrder> {
+  return request<AdminOrder>(`/orders/${id}/status`, {
+    method: 'PATCH',
+    tenantSlug,
+    accessToken,
+    body: JSON.stringify({ status }),
+  });
+}
+
+export function cancelOrder(
+  tenantSlug: string,
+  accessToken: string,
+  id: string,
+): Promise<AdminOrder> {
+  return request<AdminOrder>(`/orders/${id}/cancel`, {
+    method: 'POST',
+    tenantSlug,
+    accessToken,
+  });
+}

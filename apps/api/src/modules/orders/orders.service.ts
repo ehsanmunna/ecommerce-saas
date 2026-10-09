@@ -5,14 +5,36 @@ import {
 } from '@nestjs/common';
 import type {
   OrderStatus,
+  Prisma,
   PrismaClient as TenantPrismaClient,
 } from '@prisma-clients/tenant';
 import { CartService } from '../cart/cart.service';
 import { InventoryService } from '../inventory/inventory.service';
 import { CheckoutDto } from './dto/checkout.dto';
+import { ListOrdersDto } from './dto/list-orders.dto';
 
 const CANCELLABLE_STATUSES = new Set(['PENDING', 'CONFIRMED']);
 const STATUS_SEQUENCE = ['PENDING', 'CONFIRMED', 'SHIPPED', 'DELIVERED'];
+const DEFAULT_PAGE_SIZE = 20;
+
+const ITEMS_INCLUDE = {
+  include: { variant: { include: { product: true } } },
+} as const;
+
+const CUSTOMER_ORDER_INCLUDE = {
+  items: ITEMS_INCLUDE,
+} as const;
+
+const STAFF_ORDER_INCLUDE = {
+  items: ITEMS_INCLUDE,
+  customer: {
+    select: { id: true, email: true, firstName: true, lastName: true },
+  },
+} as const;
+
+type OrderItemWithVariant = Prisma.OrderItemGetPayload<{
+  include: { variant: { include: { product: true } } };
+}>;
 
 @Injectable()
 export class OrdersService {
@@ -87,11 +109,13 @@ export class OrdersService {
   }
 
   listOrders(tenantDb: TenantPrismaClient, customerId: string) {
-    return tenantDb.order.findMany({
-      where: { customerId },
-      orderBy: { createdAt: 'desc' },
-      include: { items: true },
-    });
+    return tenantDb.order
+      .findMany({
+        where: { customerId },
+        orderBy: { createdAt: 'desc' },
+        include: CUSTOMER_ORDER_INCLUDE,
+      })
+      .then((orders) => orders.map((order) => this.mapOrder(order)));
   }
 
   async getOrder(
@@ -101,12 +125,76 @@ export class OrdersService {
   ) {
     const order = await tenantDb.order.findUnique({
       where: { id: orderId },
-      include: { items: true },
+      include: CUSTOMER_ORDER_INCLUDE,
     });
     if (!order || order.customerId !== customerId) {
       throw new NotFoundException('Order not found');
     }
-    return order;
+    return this.mapOrder(order);
+  }
+
+  /** --- Staff-facing order management --- */
+
+  async listStaffOrders(tenantDb: TenantPrismaClient, query: ListOrdersDto) {
+    const page = query.page ?? 1;
+    const pageSize = query.pageSize ?? DEFAULT_PAGE_SIZE;
+
+    const where: Prisma.OrderWhereInput = {};
+    if (query.status) {
+      where.status = query.status;
+    }
+    if (query.paymentStatus) {
+      where.paymentStatus = query.paymentStatus;
+    }
+    if (query.search) {
+      where.OR = [
+        { shippingRecipient: { contains: query.search, mode: 'insensitive' } },
+        {
+          customer: { email: { contains: query.search, mode: 'insensitive' } },
+        },
+      ];
+    }
+
+    const [orders, total] = await Promise.all([
+      tenantDb.order.findMany({
+        where,
+        orderBy: { createdAt: 'desc' },
+        skip: (page - 1) * pageSize,
+        take: pageSize,
+        include: STAFF_ORDER_INCLUDE,
+      }),
+      tenantDb.order.count({ where }),
+    ]);
+
+    return {
+      items: orders.map((order) => this.mapOrder(order)),
+      total,
+      page,
+      pageSize,
+    };
+  }
+
+  async getStaffOrder(tenantDb: TenantPrismaClient, orderId: string) {
+    const order = await tenantDb.order.findUnique({
+      where: { id: orderId },
+      include: STAFF_ORDER_INCLUDE,
+    });
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+    return this.mapOrder(order);
+  }
+
+  async cancelStaffOrder(tenantDb: TenantPrismaClient, orderId: string) {
+    const order = await tenantDb.order.findUnique({
+      where: { id: orderId },
+      include: { items: true },
+    });
+    if (!order) {
+      throw new NotFoundException('Order not found');
+    }
+    await this.performCancel(tenantDb, order);
+    return this.getStaffOrder(tenantDb, orderId);
   }
 
   /** Staff-only forward transition: PENDING -> CONFIRMED -> SHIPPED -> DELIVERED, one step at a time. */
@@ -138,6 +226,24 @@ export class OrdersService {
     orderId: string,
   ) {
     const order = await this.getOrder(tenantDb, customerId, orderId);
+    await this.performCancel(tenantDb, order);
+    return this.getOrder(tenantDb, customerId, orderId);
+  }
+
+  /**
+   * Shared cancellation invariant (design.md): rejects unless the order is
+   * still cancellable, then restores stock for every item and marks the
+   * order CANCELLED in one transaction. Used by both customer and staff
+   * cancellation paths.
+   */
+  private async performCancel(
+    tenantDb: TenantPrismaClient,
+    order: {
+      id: string;
+      status: string;
+      items: { variantId: string; quantity: number }[];
+    },
+  ) {
     if (!CANCELLABLE_STATUSES.has(order.status)) {
       throw new BadRequestException('Order can no longer be cancelled');
     }
@@ -151,11 +257,31 @@ export class OrdersService {
         );
       }
       await tx.order.update({
-        where: { id: orderId },
+        where: { id: order.id },
         data: { status: 'CANCELLED' },
       });
     });
+  }
 
-    return this.getOrder(tenantDb, customerId, orderId);
+  /**
+   * Flattens order items for API responses: each item carries a resolved
+   * product name, SKU, and variant attributes (read-time join, per
+   * design.md), falling back to SKU/variant id when the product can't be
+   * resolved.
+   */
+  private mapOrder<T extends { items: OrderItemWithVariant[] }>(order: T) {
+    return {
+      ...order,
+      items: order.items.map((item) => ({
+        id: item.id,
+        variantId: item.variantId,
+        quantity: item.quantity,
+        unitPrice: item.unitPrice,
+        productName:
+          item.variant?.product?.name ?? item.variant?.sku ?? item.variantId,
+        sku: item.variant?.sku ?? null,
+        attributes: item.variant?.attributes ?? null,
+      })),
+    };
   }
 }

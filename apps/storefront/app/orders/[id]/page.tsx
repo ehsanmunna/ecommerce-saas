@@ -92,7 +92,12 @@ export default function OrderDetailsPage() {
               {order.items.map((item) => (
                 <div key={item.id} className="flex justify-between text-sm border-b border-border pb-3">
                   <span className="text-text-muted">
-                    Item × {item.quantity} (SKU: {item.variantId.slice(0, 8)})
+                    {item.productName ?? item.variantId.slice(0, 8)} × {item.quantity}
+                    {item.attributes && Object.keys(item.attributes).length > 0 && (
+                      <span className="text-text-muted">
+                        {' '}({Object.entries(item.attributes).map(([k, v]) => `${k}: ${v}`).join(', ')})
+                      </span>
+                    )}
                   </span>
                   <span className="font-semibold">{formatMoney(Number(item.unitPrice) * item.quantity)}</span>
                 </div>
