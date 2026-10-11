@@ -1,0 +1,2 @@
+ALTER TYPE "TenantStatus" ADD VALUE 'EXPIRED';
+ALTER TYPE "TenantStatus" ADD VALUE 'DELETED';

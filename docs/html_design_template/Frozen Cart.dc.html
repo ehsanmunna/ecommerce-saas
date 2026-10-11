@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+
+<helmet>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin="" />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&family=Montserrat:wght@400;500;700&display=swap" rel="stylesheet" />
+<style>
+  body { margin: 0; background: rgb(255,255,255); -webkit-font-smoothing: antialiased; }
+  a { color: rgb(37,43,66); text-decoration: none; }
+  a:hover { color: rgb(229,160,0); }
+  ::placeholder { color: rgb(164,164,164); }
+</style>
+</helmet>
+<div style="width:100%; background:rgb(255,255,255); font-family:Inter, Helvetica, Arial, sans-serif; color:rgb(47,47,47); overflow-x:hidden">
+
+  <div style="height:50px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center">
+    <div style="width:100%; max-width:1592px; padding:0 24px; box-sizing:border-box; display:flex; align-items:center; justify-content:space-between; gap:24px; flex-wrap:wrap">
+      <div style="display:flex; align-items:center; gap:8px">
+        <img src="./assets/icon-truck.svg" alt="" style="width:15px; height:11px" />
+        <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Free Shipping on Orders Over $99</span>
+      </div>
+      <div style="display:flex; align-items:center; gap:26px">
+        <div style="display:flex; align-items:center; gap:8px">
+          <img src="./assets/icon-return.svg" alt="" style="width:16px; height:16px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">30 Days easy return</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px">
+          <img src="./assets/icon-help.svg" alt="" style="width:16px; height:17px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Help Center</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; justify-content:center; padding:59px 0 39px">
+    <div style="width:100%; max-width:1592px; padding:0 24px; box-sizing:border-box; display:flex; align-items:center; gap:48px; flex-wrap:wrap">
+      <img src="./assets/logo.png" alt="Frozen" style="width:292px; height:63px; object-fit:contain; flex-shrink:0" />
+      <div style="flex:1; min-width:280px; display:flex; align-items:center; height:49px; background:rgb(240,240,240)">
+        <div style="width:49px; height:49px; display:flex; align-items:center; justify-content:center; flex-shrink:0">
+          <div style="width:18px; height:2px; background:rgb(26,26,26); box-shadow:0 6px 0 rgb(26,26,26), 0 -6px 0 rgb(26,26,26)"></div>
+        </div>
+        <span style="flex:1; font-size:12px; font-weight:700; line-height:100%; color:rgb(164,164,164)">Search you product</span>
+        <img src="./assets/icon-search.svg" alt="" style="width:28px; height:28px; margin-right:9px; flex-shrink:0" />
+      </div>
+      <div style="display:flex; align-items:center; gap:51px; flex-shrink:0">
+        <div style="display:flex; align-items:center; gap:7px">
+          <img src="./assets/icon-user.svg" alt="" style="width:27px; height:27px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Sign-in | Sign-up</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:8px">
+          <img src="./assets/icon-heart.svg" alt="" style="width:27px; height:25px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Wish-list</span>
+        </div>
+        <div style="display:flex; align-items:center; gap:4px">
+          <img src="./assets/icon-cart.svg" alt="" style="width:27px; height:27px" />
+          <span style="font-size:12px; font-weight:700; line-height:100%; color:rgb(0,0,0)">Cart</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div style="display:flex; flex-direction:column; align-items:center; padding:8px 24px 48px; box-sizing:border-box">
+    <div style="font-size:44px; font-weight:700; line-height:100%; color:rgb(47,47,47)">Shopping Cart</div>
+  </div>
+
+  <sc-if value="{{ hasItems }}" hint-placeholder-val="{{ true }}">
+  <div style="display:flex; justify-content:center; padding:0 24px 120px; box-sizing:border-box">
+    <div style="width:100%; max-width:1592px; display:grid; grid-template-columns:minmax(0,1fr) 380px; gap:48px">
+
+      <div style="display:flex; flex-direction:column; gap:24px; min-width:0">
+        <sc-for list="{{ items }}" as="item" hint-placeholder-count="3">
+          <div style="display:grid; grid-template-columns:120px minmax(0,1fr) auto auto; align-items:center; gap:24px; padding:24px; border-radius:20px; background:rgb(255,255,255); box-shadow:0px 4px 10px 0px rgba(0,0,0,0.08)">
+            <div style="width:120px; height:120px; border-radius:12px; overflow:hidden; background:url(./assets/product.jpg) center / cover no-repeat; flex-shrink:0"></div>
+            <div style="display:flex; flex-direction:column; gap:8px; min-width:0">
+              <span style="font-size:16px; font-weight:700; color:rgb(37,43,66)">{{ item.title }}</span>
+              <span style="font-size:14px; font-weight:400; color:rgb(115,115,115)">{{ item.brand }} · Size {{ item.size }}</span>
+              <span style="font-size:16px; font-weight:700; color:rgb(37,43,66)">{{ item.priceLabel }}</span>
+            </div>
+            <div style="display:flex; align-items:center; height:44px; border-radius:14px; border:2px solid rgb(230,230,230); overflow:hidden; flex-shrink:0">
+              <div style="width:36px; height:100%; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; cursor:pointer" onClick="{{ item.dec }}">−</div>
+              <div style="width:36px; height:100%; display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700">{{ item.qty }}</div>
+              <div style="width:36px; height:100%; display:flex; align-items:center; justify-content:center; font-size:18px; font-weight:700; cursor:pointer" onClick="{{ item.inc }}">+</div>
+            </div>
+            <div style="display:flex; flex-direction:column; align-items:flex-end; gap:10px; flex-shrink:0">
+              <span style="font-size:16px; font-weight:700; color:rgb(37,43,66)">{{ item.lineTotal }}</span>
+              <span style="font-size:13px; font-weight:600; color:rgb(229,160,0); cursor:pointer" onClick="{{ item.remove }}">Remove</span>
+            </div>
+          </div>
+        </sc-for>
+
+        <a href="./Frozen Products.dc.html" style="font-size:14px; font-weight:700; color:rgb(37,43,66); margin-top:8px">&larr; Continue Shopping</a>
+      </div>
+
+      <div style="display:flex; flex-direction:column; gap:24px; height:fit-content; padding:32px; border-radius:20px; background:rgb(248,248,248)">
+        <div style="font-size:20px; font-weight:700; color:rgb(47,47,47)">Order Summary</div>
+
+        <div style="display:flex; gap:12px">
+          <input value="{{ couponInput }}" onChange="{{ onCouponChange }}" placeholder="Coupon code" style="flex:1; height:46px; padding:0 16px; border-radius:12px; border:2px solid rgb(230,230,230); background:rgb(255,255,255); font-family:Inter, sans-serif; font-size:14px; color:rgb(47,47,47); box-sizing:border-box; outline:none" />
+          <div style="height:46px; padding:0 20px; border-radius:12px; background:rgb(26,26,26); color:rgb(255,255,255); font-size:14px; font-weight:700; display:flex; align-items:center; justify-content:center; cursor:pointer; flex-shrink:0" onClick="{{ applyCoupon }}" style-hover="background:rgb(55,55,55)">Apply</div>
+        </div>
+        <sc-if value="{{ couponMessage }}" hint-placeholder-val="{{ false }}">
+        <div style="font-size:13px; font-weight:600; color:{{ couponMessageColor }}">{{ couponMessage }}</div>
+        </sc-if>
+
+        <div style="height:1px; background:rgb(222,222,222)"></div>
+
+        <div style="display:flex; flex-direction:column; gap:14px">
+          <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:500; color:rgb(55,55,55)">
+            <span>Subtotal</span>
+            <span>{{ subtotalLabel }}</span>
+          </div>
+          <sc-if value="{{ hasDiscount }}" hint-placeholder-val="{{ false }}">
+          <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:500; color:rgb(229,160,0)">
+            <span>Discount</span>
+            <span>−{{ discountLabel }}</span>
+          </div>
+          </sc-if>
+          <div style="display:flex; justify-content:space-between; font-size:15px; font-weight:500; color:rgb(55,55,55)">
+            <span>Shipping</span>
+            <span>{{ shippingLabel }}</span>
+          </div>
+        </div>
+
+        <div style="height:1px; background:rgb(222,222,222)"></div>
+
+        <div style="display:flex; justify-content:space-between; font-size:20px; font-weight:700; color:rgb(37,43,66)">
+          <span>Total</span>
+          <span>{{ totalLabel }}</span>
+        </div>
+
+        <a href="./Frozen Checkout.dc.html" style="height:53px; border-radius:20px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center; margin-top:8px" style-hover="background:rgb(255,172,51)">
+          <span style="font-size:18px; font-weight:700; color:rgb(54,54,54)">Proceed to Checkout</span>
+        </a>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ noItems }}" hint-placeholder-val="{{ false }}">
+  <div style="display:flex; flex-direction:column; align-items:center; gap:20px; padding:60px 0 160px">
+    <img src="./assets/icon-cart.svg" alt="" style="width:64px; height:64px; opacity:0.4" />
+    <span style="font-size:22px; font-weight:700; color:rgb(47,47,47)">Your cart is empty</span>
+    <a href="./Frozen Products.dc.html" style="height:51px; padding:0 32px; border-radius:20px; background:rgb(255,207,64); display:flex; align-items:center; justify-content:center" style-hover="background:rgb(255,172,51)">
+      <span style="font-size:16px; font-weight:700; color:rgb(54,54,54)">Start Shopping</span>
+    </a>
+  </div>
+  </sc-if>
+
+  <div style="background:rgb(26,26,26); display:flex; justify-content:center; padding:72px 24px">
+    <div style="width:100%; max-width:1592px; display:flex; align-items:center; justify-content:space-between; gap:32px; flex-wrap:wrap">
+      <span style="font-size:16px; font-weight:700; line-height:100%; color:rgb(255,255,255)">Frozen — Trendy &amp; Stylish Outfits for Kids</span>
+      <span style="font-size:16px; font-weight:400; line-height:100%; color:rgb(178,178,178)">© 2026 Frozen. All rights reserved.</span>
+    </div>
+  </div>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const INITIAL_ITEMS = [
+  { id: 1, title: "Kids Cotton Hoodie", brand: "NIKE", size: "M", price: 38, qty: 1 },
+  { id: 2, title: "Ruffle Party Dress", brand: "ZARA KIDS", size: "4", price: 36, qty: 2 },
+  { id: 3, title: "Padded Winter Coat", brand: "UNIQLO", size: "6", price: 78, qty: 1 },
+];
+
+const VALID_COUPONS = { FROZEN10: 0.10, WELCOME15: 0.15 };
+const FREE_SHIPPING_THRESHOLD = 99;
+const SHIPPING_COST = 6.99;
+
+class Component extends DCLogic {
+  state = {
+    items: INITIAL_ITEMS.map(i => ({ ...i })),
+    couponInput: "",
+    appliedCoupon: null,
+    couponMessage: "",
+    couponMessageColor: "rgb(115,115,115)",
+  };
+
+  updateQty(id, delta) {
+    this.setState(s => ({
+      items: s.items.map(i => i.id === id ? { ...i, qty: Math.max(1, i.qty + delta) } : i),
+    }));
+  }
+
+  removeItem(id) {
+    this.setState(s => ({ items: s.items.filter(i => i.id !== id) }));
+  }
+
+  applyCoupon() {
+    const code = this.state.couponInput.trim().toUpperCase();
+    if (!code) return;
+    if (VALID_COUPONS[code]) {
+      this.setState({ appliedCoupon: code, couponMessage: `Coupon "${code}" applied`, couponMessageColor: "rgb(84,163,73)" });
+    } else {
+      this.setState({ appliedCoupon: null, couponMessage: "Invalid coupon code", couponMessageColor: "rgb(214,69,69)" });
+    }
+  }
+
+  renderVals() {
+    const subtotal = this.state.items.reduce((sum, i) => sum + i.price * i.qty, 0);
+    const discountRate = this.state.appliedCoupon ? VALID_COUPONS[this.state.appliedCoupon] : 0;
+    const discount = subtotal * discountRate;
+    const afterDiscount = subtotal - discount;
+    const shipping = this.state.items.length === 0 ? 0 : (afterDiscount >= FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_COST);
+    const total = afterDiscount + shipping;
+
+    const items = this.state.items.map(i => ({
+      title: i.title,
+      brand: i.brand,
+      size: i.size,
+      priceLabel: `$${i.price.toFixed(2)}`,
+      qty: i.qty,
+      lineTotal: `$${(i.price * i.qty).toFixed(2)}`,
+      inc: () => this.updateQty(i.id, 1),
+      dec: () => this.updateQty(i.id, -1),
+      remove: () => this.removeItem(i.id),
+    }));
+
+    return {
+      hasItems: this.state.items.length > 0,
+      noItems: this.state.items.length === 0,
+      items,
+      couponInput: this.state.couponInput,
+      onCouponChange: (e) => this.setState({ couponInput: e.target.value }),
+      applyCoupon: () => this.applyCoupon(),
+      couponMessage: this.state.couponMessage,
+      couponMessageColor: this.state.couponMessageColor,
+      hasDiscount: discount > 0,
+      discountLabel: `$${discount.toFixed(2)}`,
+      subtotalLabel: `$${subtotal.toFixed(2)}`,
+      shippingLabel: shipping === 0 ? "Free" : `$${shipping.toFixed(2)}`,
+      totalLabel: `$${total.toFixed(2)}`,
+    };
+  }
+}
+
+</script>
+</body>
+</html>

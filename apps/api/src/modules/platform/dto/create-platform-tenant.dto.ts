@@ -1,0 +1,40 @@
+import {
+  IsEmail,
+  IsIn,
+  IsString,
+  Matches,
+  MaxLength,
+  MinLength,
+} from 'class-validator';
+import { ApiProperty } from '@nestjs/swagger';
+
+export class CreatePlatformTenantDto {
+  @ApiProperty({ example: 'Acme Inc', minLength: 2, maxLength: 100 })
+  @IsString()
+  @MinLength(2)
+  @MaxLength(100)
+  companyName!: string;
+
+  @ApiProperty({ example: 'acme', minLength: 3, maxLength: 63 })
+  @IsString()
+  @MinLength(3)
+  @MaxLength(63)
+  @Matches(/^[a-z0-9]+(-[a-z0-9]+)*$/, {
+    message: 'slug must contain only lowercase letters, digits, and hyphens',
+  })
+  slug!: string;
+
+  @ApiProperty({ example: 'owner@acme.test' })
+  @IsEmail()
+  ownerEmail!: string;
+
+  @ApiProperty({ example: 'supersecret123', minLength: 8, maxLength: 200 })
+  @IsString()
+  @MinLength(8)
+  @MaxLength(200)
+  ownerPassword!: string;
+
+  @ApiProperty({ example: 'BASIC', enum: ['BASIC', 'PRO', 'ENTERPRISE'] })
+  @IsIn(['BASIC', 'PRO', 'ENTERPRISE'])
+  plan!: string;
+}
