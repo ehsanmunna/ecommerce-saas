@@ -24,6 +24,7 @@
     "prisma:migrate:platform:dev": "prisma migrate dev --schema=../../prisma/platform/schema.prisma",
     "prisma:migrate:tenant:dev": "prisma migrate dev --schema=../../prisma/tenant/schema.prisma",
     "prisma:migrate:platform:deploy": "prisma migrate deploy --schema=../../prisma/platform/schema.prisma",
+    "migrate:platform": "prisma migrate deploy --schema=../../prisma/platform/schema.prisma",
     "postinstall": "npm run prisma:generate"
   },
   "dependencies": {

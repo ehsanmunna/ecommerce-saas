@@ -341,3 +341,20 @@ export function getOrder(accessToken: string, id: string): Promise<OrderView> {
 export function cancelOrder(accessToken: string, id: string): Promise<OrderView> {
   return request(`/storefront/orders/${id}/cancel`, { method: 'POST', accessToken });
 }
+
+export function forgotPasswordCustomer(email: string): Promise<{ message: string }> {
+  return request('/storefront/auth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+}
+
+export function resetPasswordCustomer(
+  token: string,
+  newPassword: string,
+): Promise<{ message: string }> {
+  return request('/storefront/auth/reset-password', {
+    method: 'POST',
+    body: JSON.stringify({ token, newPassword }),
+  });
+}

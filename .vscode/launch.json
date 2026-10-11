@@ -13,17 +13,12 @@
             ],
             "type": "node"
         },
+        
         {
-            "type": "node",
+            "command": "npm run dev:api",
+            "name": "Run npm start",
             "request": "launch",
-            "name": "Launch Program",
-            "skipFiles": [
-                "<node_internals>/**"
-            ],
-            "program": "${file}",
-            "outFiles": [
-                "${workspaceFolder}/**/*.js"
-            ]
+            "type": "node-terminal"
         }
     ]
 }

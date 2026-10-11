@@ -144,3 +144,20 @@ export function retryProvisioning(id: string, accessToken: string): Promise<Plat
     accessToken,
   });
 }
+
+export function forgotPasswordPlatform(email: string): Promise<{ message: string }> {
+  return platformRequest<{ message: string }>('/platform/auth/forgot-password', {
+    method: 'POST',
+    body: JSON.stringify({ email }),
+  });
+}
+
+export function resetPasswordPlatform(
+  token: string,
+  newPassword: string,
+): Promise<{ message: string }> {
+  return platformRequest<{ message: string }>('/platform/auth/reset-password', {
+    method: 'POST',
+    body: JSON.stringify({ token, newPassword }),
+  });
+}
