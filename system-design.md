@@ -1075,9 +1075,9 @@ Every request should go through:
 ```text
 Request
    ↓
-Authentication
-   ↓
 Tenant Resolution
+   ↓
+Authentication
    ↓
 Authorization
    ↓
